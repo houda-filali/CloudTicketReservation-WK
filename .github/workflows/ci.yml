@@ -3,7 +3,7 @@ name: CI Pipeline - Ticket Booking App
 # When this workflow runs
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, dev ]
   pull_request:
     branches: [ main ]
 
