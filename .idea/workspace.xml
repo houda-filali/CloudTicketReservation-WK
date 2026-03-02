@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3fdad77f-c22d-44a4-813d-b11bd1679aca" name="Changes" comment="Update example test file to JUnit 4.">
+    <list default="true" id="3fdad77f-c22d-44a4-813d-b11bd1679aca" name="Changes" comment="Commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -152,7 +152,15 @@
       <option name="project" value="LOCAL" />
       <updated>1772480734954</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Commit">
+      <option name="closed" value="true" />
+      <created>1772487052604</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1772487052604</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -162,6 +170,7 @@
     <MESSAGE value="Modify dependencies to JUnit 5." />
     <MESSAGE value="Modify to JUnit 4." />
     <MESSAGE value="Update example test file to JUnit 4." />
-    <option name="LAST_COMMIT_MESSAGE" value="Update example test file to JUnit 4." />
+    <MESSAGE value="Commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="Commit" />
   </component>
 </project>
