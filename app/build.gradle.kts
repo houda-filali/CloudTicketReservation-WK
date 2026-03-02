@@ -38,10 +38,12 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
-    // JUnit 4 only
+    // JUnit 4 only (remove JUnit 5 dependencies)
     testImplementation("junit:junit:4.13.2")
 
     // Android Test dependencies
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }
+
+// Remove the tasks.withType<Test> block for JUnit 4
