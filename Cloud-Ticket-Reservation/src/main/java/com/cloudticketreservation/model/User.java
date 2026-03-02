@@ -4,12 +4,10 @@ public class User {
     // this class should handle all attributes related to users and contains no business logic.
     private String id;
     private String email;
-    private String phoneNumber;
 
-    public User (String id, String email, String phoneNumber) {
+    public User (String id, String email) {
         this.id = id;
         this.email = email;
-        this.phoneNumber = phoneNumber;
     }
 
     public String getId() {
@@ -26,10 +24,4 @@ public class User {
         this.email = email;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
 }
