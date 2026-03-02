@@ -1,7 +1,6 @@
 name: CI Pipeline - Ticket Booking App
 
 # When this workflow runs
-workflow_dispatch:
 on:
   push:
     branches: [ main, dev ]
