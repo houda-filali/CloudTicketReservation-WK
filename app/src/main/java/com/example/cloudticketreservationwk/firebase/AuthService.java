@@ -12,6 +12,18 @@ public class AuthService {
         void onSuccess(FirebaseUser user);
         void onError(Exception e);
     }
+
+    public interface SessionCallback {
+        void onLoggedIn(FirebaseUser user);
+        void onLoggedOut();
+    }
+
+    public void checkSession(SessionCallback cb) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null) cb.onLoggedIn(user);
+        else cb.onLoggedOut();
+    }
+
     public void registerWithEmail(String email, String password, UserCallback cb) {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(result -> {
@@ -46,11 +58,23 @@ public class AuthService {
                 .addOnSuccessListener(result -> {
                     FirebaseUser user = result.getUser();
                     if (user == null) {
-                        cb.onError(new Exception("User null"));
+                        cb.onError(new Exception("User is null after login"));
                         return;
                     }
                     cb.onSuccess(user);
                 })
                 .addOnFailureListener(cb::onError);
+    }
+
+    public void logout() {
+        auth.signOut();
+    }
+
+    public FirebaseUser getCurrentUser() {
+        return auth.getCurrentUser();
+    }
+
+    public boolean isLoggedIn() {
+        return auth.getCurrentUser() != null;
     }
 }
