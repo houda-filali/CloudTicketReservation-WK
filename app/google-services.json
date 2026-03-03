@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "952190860088",
+    "firebase_url": "https://cloudticketreservation-wk-default-rtdb.firebaseio.com",
+    "project_id": "cloudticketreservation-wk",
+    "storage_bucket": "cloudticketreservation-wk.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952190860088:android:be89aea35ca848a896dfcd",
+        "android_client_info": {
+          "package_name": "com.example.cloudticketreservationwk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0M_tLv1zc5Tx_JxxgFmC5vp3OxQbxg_4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
