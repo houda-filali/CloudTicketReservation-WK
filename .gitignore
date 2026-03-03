@@ -27,5 +27,5 @@ Thumbs.db
 ### Logs ###
 *.log
 
-### Google Services ###
+### Google Services (json) ###
 /app/google-services.json

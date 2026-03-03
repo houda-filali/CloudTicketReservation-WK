@@ -69,7 +69,7 @@ public class AuthRegisterInstrumentedTest {
 
     /**
      * Sanity test: Firestore is reachable & writeable (or at least not hanging).
-     * If this fails, your Auth test may "hang" waiting for Firestore role doc creation.
+     * If this fails, the Auth test may "hang" waiting for Firestore role doc creation.
      */
     @Test
     public void firestore_ping_write_works() throws Exception {

@@ -12,7 +12,7 @@ public class AuthService {
         void onSuccess(FirebaseUser user);
         void onError(Exception e);
     }
-
+    //Upon registering
     public void registerWithEmail(String email, String password, UserCallback cb) {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(result -> {

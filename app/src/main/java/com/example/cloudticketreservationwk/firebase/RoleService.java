@@ -15,7 +15,7 @@ public class RoleService {
         void onSuccess();
         void onError(Exception e);
     }
-
+    //
     public void ensureUserProfile(String uid, String email, String phone, String role, SimpleCallback cb) {
         Map<String, Object> data = new HashMap<>();
         if (email != null) data.put("email", email);
