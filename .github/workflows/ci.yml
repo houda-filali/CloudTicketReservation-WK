@@ -1,0 +1,44 @@
+name: CI Pipeline - Ticket Booking App
+
+# When this workflow runs
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+
+# What jobs to run
+jobs:
+  build-and-test:
+    name: Build and Test with JUnit
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Get the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Java
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Step 3: Make gradlew executable
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      # Step 4: Build and test with Gradle
+      - name: Build and test with Gradle
+        run: ./gradlew build test
+
+      # Step 5: Upload test reports - UPDATED TO V4!
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4  # Changed from v3 to v4
+        with:
+          name: test-reports
+          path: app/build/reports/tests//testDebugUnitTest/  # Gradle's test report location
