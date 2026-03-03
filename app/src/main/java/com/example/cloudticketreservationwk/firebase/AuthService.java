@@ -12,7 +12,6 @@ public class AuthService {
         void onSuccess(FirebaseUser user);
         void onError(Exception e);
     }
-    //Upon registering
     public void registerWithEmail(String email, String password, UserCallback cb) {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(result -> {
@@ -39,6 +38,18 @@ public class AuthService {
                                 }
                             }
                     );
+                })
+                .addOnFailureListener(cb::onError);
+    }
+    public void loginWithEmail(String email, String password, UserCallback cb) {
+        auth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener(result -> {
+                    FirebaseUser user = result.getUser();
+                    if (user == null) {
+                        cb.onError(new Exception("User null"));
+                        return;
+                    }
+                    cb.onSuccess(user);
                 })
                 .addOnFailureListener(cb::onError);
     }
