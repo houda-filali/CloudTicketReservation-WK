@@ -1,6 +1,7 @@
 package com.example.cloudticketreservationwk.controller;
 
 import com.example.cloudticketreservationwk.R;
+import com.example.cloudticketreservationwk.firebase.AuthService;
 import com.example.cloudticketreservationwk.service.InMemoryStore;
 
 import android.content.Intent;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -31,10 +33,11 @@ public class MyReservationsActivity extends AppCompatActivity implements Reserva
         tvEmpty = findViewById(R.id.tvEmptyReservations);
         RecyclerView rv = findViewById(R.id.rvMyReservations);
         MaterialButton btnBack = findViewById(R.id.btnBackFromReservations);
-        MaterialButton btnLogout = findViewById(R.id.btnLogout);
 
-        if (btnBack != null) btnBack.setOnClickListener(v -> finish());
-        if (btnLogout != null) btnLogout.setOnClickListener(v -> logout());
+        MaterialButton btnLogout = findViewById(R.id.btnLogout);
+        if (btnLogout != null) btnLogout.setOnClickListener(v -> confirmLogout());
+
+        btnBack.setOnClickListener(v -> finish());
 
         adapter = new ReservationAdapter(reservations, this);
         rv.setLayoutManager(new LinearLayoutManager(this));
@@ -53,12 +56,10 @@ public class MyReservationsActivity extends AppCompatActivity implements Reserva
         reservations.clear();
 
         for (InMemoryStore.ReservationItem r : InMemoryStore.MY_RESERVATIONS) {
-            String title = (r.event == null) ? "" : r.event.title;
-            String date = (r.event == null) ? "" : r.event.date;
-
             reservations.add(new ReservationAdapter.ReservationItem(
-                    title,
-                    date,
+                    r.id,
+                    r.event.title,
+                    r.event.date,
                     String.valueOf(r.tickets),
                     r.status
             ));
@@ -70,10 +71,23 @@ public class MyReservationsActivity extends AppCompatActivity implements Reserva
 
     @Override
     public void onCancelClicked(ReservationAdapter.ReservationItem r) {
-        Snackbar.make(findViewById(android.R.id.content), "tba", Snackbar.LENGTH_SHORT).show();
+        InMemoryStore.cancelReservation(r.id);
+        reloadFromStore();
+        Snackbar.make(findViewById(android.R.id.content), "Reservation canceled", Snackbar.LENGTH_SHORT).show();
     }
 
-    private void logout() {
+    private void confirmLogout() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setNegativeButton("Cancel", (d, w) -> d.dismiss())
+                .setPositiveButton("Logout", (d, w) -> doLogout())
+                .show();
+    }
+
+    private void doLogout() {
+        new AuthService().logout();
+
         Intent i = new Intent(this, MainActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);

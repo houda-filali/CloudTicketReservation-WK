@@ -41,7 +41,8 @@
             app:boxBackgroundMode="none"
             app:hintTextColor="#7A3A3A"
             app:endIconMode="custom"
-            app:endIconDrawable="@android:drawable/ic_dialog_email">
+            app:endIconDrawable="@drawable/ic_person_brown"
+            app:endIconTint="#7A3A3A">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEmail"
@@ -49,7 +50,11 @@
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
                 android:textColor="#4B1E1E"
-                android:textColorHint="#7A3A3A" />
+                android:textColorHint="#7A3A3A"
+                android:enabled="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <View
@@ -76,7 +81,11 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
                 android:textColor="#4B1E1E"
-                android:textColorHint="#7A3A3A" />
+                android:textColorHint="#7A3A3A"
+                android:enabled="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <View
@@ -104,7 +113,11 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
                 android:textColor="#4B1E1E"
-                android:textColorHint="#7A3A3A" />
+                android:textColorHint="#7A3A3A"
+                android:enabled="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <View

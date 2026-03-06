@@ -17,12 +17,14 @@ import java.util.List;
 public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.VH> {
 
     public static class ReservationItem {
+        public final String id;
         public final String eventTitle;
         public final String date;
         public final String tickets;
         public final String status;
 
-        public ReservationItem(String eventTitle, String date, String tickets, String status) {
+        public ReservationItem(String id, String eventTitle, String date, String tickets, String status) {
+            this.id = id;
             this.eventTitle = eventTitle;
             this.date = date;
             this.tickets = tickets;
@@ -71,6 +73,12 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         h.tvDate.setText("Date: " + r.date);
         h.tvTickets.setText("Tickets: " + r.tickets);
         h.tvStatus.setText("Status: " + r.status);
+
+        if ("Canceled".equals(r.status)) {
+            h.btnCancel.setEnabled(false);
+        } else {
+            h.btnCancel.setEnabled(true);
+        }
 
         h.btnCancel.setOnClickListener(v -> listener.onCancelClicked(r));
     }

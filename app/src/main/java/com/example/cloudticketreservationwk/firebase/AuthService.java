@@ -13,17 +13,6 @@ public class AuthService {
         void onError(Exception e);
     }
 
-    public interface SessionCallback {
-        void onLoggedIn(FirebaseUser user);
-        void onLoggedOut();
-    }
-
-    public void checkSession(SessionCallback cb) {
-        FirebaseUser user = auth.getCurrentUser();
-        if (user != null) cb.onLoggedIn(user);
-        else cb.onLoggedOut();
-    }
-
     public void registerWithEmail(String email, String password, UserCallback cb) {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(result -> {
@@ -33,26 +22,25 @@ public class AuthService {
                         return;
                     }
 
+                    String normalized = (email == null) ? "" : email.trim().toLowerCase();
+                    String role = normalized.contains(".admin")
+                            ? Constants.ROLE_ADMIN
+                            : Constants.ROLE_CUSTOMER;
+
                     roleService.ensureUserProfile(
                             user.getUid(),
                             email,
                             null,
-                            Constants.ROLE_CUSTOMER,
+                            role,
                             new RoleService.SimpleCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    cb.onSuccess(user);
-                                }
-
-                                @Override
-                                public void onError(Exception e) {
-                                    cb.onError(e);
-                                }
+                                @Override public void onSuccess() { cb.onSuccess(user); }
+                                @Override public void onError(Exception e) { cb.onError(e); }
                             }
                     );
                 })
                 .addOnFailureListener(cb::onError);
     }
+
     public void loginWithEmail(String email, String password, UserCallback cb) {
         auth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(result -> {
@@ -68,13 +56,5 @@ public class AuthService {
 
     public void logout() {
         auth.signOut();
-    }
-
-    public FirebaseUser getCurrentUser() {
-        return auth.getCurrentUser();
-    }
-
-    public boolean isLoggedIn() {
-        return auth.getCurrentUser() != null;
     }
 }

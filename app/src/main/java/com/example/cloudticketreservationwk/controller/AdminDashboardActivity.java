@@ -1,6 +1,7 @@
 package com.example.cloudticketreservationwk.controller;
 
 import com.example.cloudticketreservationwk.R;
+import com.example.cloudticketreservationwk.firebase.AuthService;
 import com.example.cloudticketreservationwk.service.InMemoryStore;
 
 import android.content.Intent;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +38,11 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminEv
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
 
-        if (btnLogout != null) btnLogout.setOnClickListener(v -> logout());
+        if (btnLogout != null) btnLogout.setOnClickListener(v -> confirmLogout());
 
         View addBtn = findViewByIdName("btnAddEvent");
         if (addBtn == null) addBtn = findViewByIdName("fabAddEvent");
+
         if (addBtn != null) {
             addBtn.setOnClickListener(v -> {
                 Intent intent = new Intent(this, AdminEventFormActivity.class);
@@ -61,13 +64,7 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminEv
         adminEvents.clear();
         for (InMemoryStore.EventItem e : InMemoryStore.EVENTS) {
             adminEvents.add(new AdminEventAdapter.AdminEvent(
-                    e.id,
-                    e.title,
-                    e.date,
-                    e.location,
-                    e.category,
-                    e.capacity,
-                    e.status
+                    e.id, e.title, e.date, e.location, e.category, e.capacity, e.status
             ));
         }
         if (adapter != null) adapter.notifyDataSetChanged();
@@ -80,13 +77,6 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminEv
         return findViewById(id);
     }
 
-    private void logout() {
-        Intent i = new Intent(this, MainActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(i);
-        finish();
-    }
-
     @Override
     public void onEdit(AdminEventAdapter.AdminEvent e) {
         Intent intent = new Intent(this, AdminEventFormActivity.class);
@@ -97,21 +87,38 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminEv
         intent.putExtra("EVENT_LOCATION", e.location);
         intent.putExtra("EVENT_CATEGORY", e.category);
         intent.putExtra("EVENT_CAPACITY", e.capacity);
-        intent.putExtra("EVENT_STATUS", e.status);
         startActivity(intent);
     }
 
     @Override
     public void onCancel(AdminEventAdapter.AdminEvent e) {
         InMemoryStore.EventItem real = InMemoryStore.findEventById(e.id);
-        if (real != null) real.status = "Canceled";
+        if (real != null) real.status = InMemoryStore.STATUS_CANCELED;
         reloadFromStore();
     }
 
     @Override
     public void onUncancel(AdminEventAdapter.AdminEvent e) {
         InMemoryStore.EventItem real = InMemoryStore.findEventById(e.id);
-        if (real != null) real.status = "Active";
+        if (real != null) real.status = InMemoryStore.STATUS_ACTIVE;
         reloadFromStore();
+    }
+
+    private void confirmLogout() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setNegativeButton("Cancel", (d, w) -> d.dismiss())
+                .setPositiveButton("Logout", (d, w) -> doLogout())
+                .show();
+    }
+
+    private void doLogout() {
+        new AuthService().logout();
+
+        Intent i = new Intent(this, MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(i);
+        finish();
     }
 }

@@ -1,7 +1,7 @@
 package com.example.cloudticketreservationwk.controller;
 
 import com.example.cloudticketreservationwk.R;
-import com.example.cloudticketreservationwk.service.InMemoryStore;
+import com.example.cloudticketreservationwk.firebase.AuthService;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -50,37 +51,22 @@ public class AdminEventFormActivity extends AppCompatActivity {
 
         MaterialButton btnBack = findViewById(R.id.btnBackFromForm);
         MaterialButton btnSave = findViewById(R.id.btnSaveEvent);
-        MaterialButton btnLogout = findViewById(R.id.btnLogout);
 
-        if (btnLogout != null) btnLogout.setOnClickListener(v -> logout());
-        if (btnBack != null) btnBack.setOnClickListener(v -> finish());
+        MaterialButton btnLogout = findViewById(R.id.btnLogout);
+        if (btnLogout != null) btnLogout.setOnClickListener(v -> confirmLogout());
 
         String mode = getIntent().getStringExtra("MODE");
-
         if ("EDIT".equals(mode)) {
             tvAdminFormTitle.setText("Edit Event");
             btnSave.setText("Update");
 
-            String editingId = getIntent().getStringExtra("EVENT_ID");
-            InMemoryStore.EventItem e = InMemoryStore.findEventById(editingId);
+            etEventTitle.setText(getIntent().getStringExtra("EVENT_TITLE"));
+            etEventDate.setText(getIntent().getStringExtra("EVENT_DATE"));
+            etEventLocation.setText(getIntent().getStringExtra("EVENT_LOCATION"));
+            etEventCategory.setText(getIntent().getStringExtra("EVENT_CATEGORY"));
 
-            if (e != null) {
-                etEventTitle.setText(e.title);
-                etEventDate.setText(e.date);
-                etEventLocation.setText(e.location);
-                etEventCategory.setText(e.category);
-                etEventDescription.setText(e.description);
-                if (e.capacity > 0) etEventCapacity.setText(String.valueOf(e.capacity));
-            } else {
-                etEventTitle.setText(getIntent().getStringExtra("EVENT_TITLE"));
-                etEventDate.setText(getIntent().getStringExtra("EVENT_DATE"));
-                etEventLocation.setText(getIntent().getStringExtra("EVENT_LOCATION"));
-                etEventCategory.setText(getIntent().getStringExtra("EVENT_CATEGORY"));
-                etEventDescription.setText(getIntent().getStringExtra("EVENT_DESCRIPTION"));
-                int cap = getIntent().getIntExtra("EVENT_CAPACITY", 0);
-                if (cap > 0) etEventCapacity.setText(String.valueOf(cap));
-            }
-
+            int cap = getIntent().getIntExtra("EVENT_CAPACITY", 0);
+            if (cap > 0) etEventCapacity.setText(String.valueOf(cap));
         } else {
             tvAdminFormTitle.setText("Add Event");
             btnSave.setText("Save");
@@ -100,19 +86,12 @@ public class AdminEventFormActivity extends AppCompatActivity {
         if (etEventDate != null) etEventDate.setOnClickListener(dateClick);
         if (tilEventDate != null) tilEventDate.setOnClickListener(dateClick);
 
-        if (btnSave != null) {
-            btnSave.setOnClickListener(v -> {
-                setResult(RESULT_OK, new Intent());
-                finish();
-            });
-        }
-    }
+        btnBack.setOnClickListener(v -> finish());
 
-    private void logout() {
-        Intent i = new Intent(this, MainActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(i);
-        finish();
+        btnSave.setOnClickListener(v -> {
+            setResult(RESULT_OK, new Intent());
+            finish();
+        });
     }
 
     private void openMaterialCalendar() {
@@ -129,5 +108,23 @@ public class AdminEventFormActivity extends AppCompatActivity {
         });
 
         picker.show(getSupportFragmentManager(), "DATE_PICKER");
+    }
+
+    private void confirmLogout() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setNegativeButton("Cancel", (d, w) -> d.dismiss())
+                .setPositiveButton("Logout", (d, w) -> doLogout())
+                .show();
+    }
+
+    private void doLogout() {
+        new AuthService().logout();
+
+        Intent i = new Intent(this, MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(i);
+        finish();
     }
 }
