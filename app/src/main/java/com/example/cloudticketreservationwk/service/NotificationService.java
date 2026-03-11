@@ -1,4 +1,4 @@
 package com.example.cloudticketreservationwk.service;
 
-public class EventService {
+public class NotificationService {
 }

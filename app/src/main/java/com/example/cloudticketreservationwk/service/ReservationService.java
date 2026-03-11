@@ -1,7 +1,7 @@
-package com.cloudticketreservation.service;
+package com.example.cloudticketreservationwk.service;
 
-import com.cloudticketreservation.model.User;
-import com.cloudticketreservation.model.Event;
+import com.example.cloudticketreservationwk.model.User;
+import com.example.cloudticketreservationwk.model.Event;
 
 public class ReservationService {
     public boolean createReservation(User user, Event event) {
