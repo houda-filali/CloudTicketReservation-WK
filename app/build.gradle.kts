@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
 }
+if (!System.getenv("CI").toBoolean()) {
+    apply(plugin = "com.google.gms.google-services")
+}
 
 android {
     namespace = "com.example.cloudticketreservationwk"
@@ -37,7 +40,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-
+    //testImplementation(libs.junit)
     // We're using junit 5, its in the requirements
     //testImplementation("junit:junit:4.13.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
@@ -50,6 +53,13 @@ dependencies {
     // Android Test dependencies
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test:core:1.5.0")
+
 }
 
 // DON'T REMOVE (for junit5)

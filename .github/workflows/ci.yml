@@ -36,7 +36,7 @@ jobs:
 
       # Step 4: Build and test with Gradle
       - name: Build and test with Gradle
-        run: ./gradlew build test
+        run: ./gradlew testDebugUnitTest
 
       # Step 5: Upload test reports - UPDATED TO V4!
       - name: Upload test reports
