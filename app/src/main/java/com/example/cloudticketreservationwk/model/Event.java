@@ -2,7 +2,7 @@ package com.example.cloudticketreservationwk.model;
 
 public class Event {
     private String id;
-    private String name;
+    private String title;
     private int availableSeats;
     private int totalSeats;
     private String date;
@@ -12,8 +12,8 @@ public class Event {
 
     // Default constructor for Firestore
     public Event() {}
-    public Event(String name, String date, String location, String category, int availableSeats, int totalSeats) {
-        this.name = name;
+    public Event(String title, String date, String location, String category, int availableSeats, int totalSeats) {
+        this.title = title;
         this.date = date;
         this.location = location;
         this.category = category;
@@ -28,11 +28,11 @@ public class Event {
     public void setId(String id) {
         this.id = id;
     }
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
     public String getDate() {
         return this.date;
@@ -67,8 +67,8 @@ public class Event {
     public boolean getIsCancelled() {
         return this.isCancelled;
     }
-    public void setIsCancelled(boolean isCancelled) {
-        this.isCancelled = isCancelled;
+    public void setCancelled(boolean cancelled) {
+        this.isCancelled = cancelled;
     }
 
     // Helper methods
