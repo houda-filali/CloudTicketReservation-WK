@@ -2,6 +2,7 @@ package com.example.cloudticketreservationwk.controller;
 
 import com.example.cloudticketreservationwk.R;
 import com.example.cloudticketreservationwk.firebase.AuthService;
+import com.example.cloudticketreservationwk.service.EventService;
 import com.example.cloudticketreservationwk.service.InMemoryStore;
 
 import android.content.Intent;
@@ -10,16 +11,24 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.cloudticketreservationwk.service.ReservationService;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class EventDetailsActivity extends AppCompatActivity {
+    private EventService eventService;
+    private String eventId;
+    private String eventTitle;
+    private ReservationService reservationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
+
+        reservationService = new ReservationService(this);
+        eventService = new EventService(this);
 
         String eventId = getIntent().getStringExtra("EVENT_ID");
         String title = getIntent().getStringExtra("TITLE");

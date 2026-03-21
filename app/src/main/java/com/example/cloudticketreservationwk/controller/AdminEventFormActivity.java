@@ -2,12 +2,15 @@ package com.example.cloudticketreservationwk.controller;
 
 import com.example.cloudticketreservationwk.R;
 import com.example.cloudticketreservationwk.firebase.AuthService;
+import com.example.cloudticketreservationwk.model.Event;
+import com.example.cloudticketreservationwk.service.EventService;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,6 +19,7 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,64 +37,200 @@ public class AdminEventFormActivity extends AppCompatActivity {
 
     private TextInputLayout tilEventDate;
     private TextView tvAdminFormTitle;
+    private MaterialButton btnSave;
+    private EventService eventService;
+    private String mode;
+    private String eventId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_event_form);
 
+        initializeViews();
+        initializeServices();
+        getIntentData();
+        setupFormBasedOnMode();
+        setupDatePicker();
+        setupClickListeners();
+    }
+
+    private void initializeViews() {
         etEventTitle = findViewById(R.id.etEventTitle);
         etEventDate = findViewById(R.id.etEventDate);
         etEventLocation = findViewById(R.id.etEventLocation);
         etEventCategory = findViewById(R.id.etEventCategory);
         etEventCapacity = findViewById(R.id.etEventCapacity);
         etEventDescription = findViewById(R.id.etEventDescription);
-
         tilEventDate = findViewById(R.id.tilEventDate);
         tvAdminFormTitle = findViewById(R.id.tvAdminFormTitle);
+        btnSave = findViewById(R.id.btnSaveEvent);
 
         MaterialButton btnBack = findViewById(R.id.btnBackFromForm);
-        MaterialButton btnSave = findViewById(R.id.btnSaveEvent);
-
         MaterialButton btnLogout = findViewById(R.id.btnLogout);
-        if (btnLogout != null) btnLogout.setOnClickListener(v -> confirmLogout());
 
-        String mode = getIntent().getStringExtra("MODE");
+        btnBack.setOnClickListener(v -> finish());
+        if (btnLogout != null) {
+            btnLogout.setOnClickListener(v -> confirmLogout());
+        }
+    }
+
+    private void initializeServices() {
+        eventService = new EventService(this);
+    }
+
+    private void getIntentData() {
+        mode = getIntent().getStringExtra("MODE");
+        eventId = getIntent().getStringExtra("EVENT_ID");
+    }
+
+    private void setupFormBasedOnMode() {
         if ("EDIT".equals(mode)) {
+            // EDIT MODE configuration
             tvAdminFormTitle.setText("Edit Event");
-            btnSave.setText("Update");
+            btnSave.setText("Update Event");
 
+            // Populate fields with existing event data
             etEventTitle.setText(getIntent().getStringExtra("EVENT_TITLE"));
             etEventDate.setText(getIntent().getStringExtra("EVENT_DATE"));
             etEventLocation.setText(getIntent().getStringExtra("EVENT_LOCATION"));
             etEventCategory.setText(getIntent().getStringExtra("EVENT_CATEGORY"));
 
             int cap = getIntent().getIntExtra("EVENT_CAPACITY", 0);
-            if (cap > 0) etEventCapacity.setText(String.valueOf(cap));
-        } else {
-            tvAdminFormTitle.setText("Add Event");
-            btnSave.setText("Save");
-        }
+            if (cap > 0) {
+                etEventCapacity.setText(String.valueOf(cap));
+            }
 
+            String desc = getIntent().getStringExtra("EVENT_DESCRIPTION");
+            if (desc != null && !desc.isEmpty()) {
+                etEventDescription.setText(desc);
+            }
+        } else {
+            // ADD MODE configuration
+            tvAdminFormTitle.setText("Add New Event");
+            btnSave.setText("Create Event");
+            // Fields remain empty for user input
+        }
+    }
+
+    private void setupDatePicker() {
         if (etEventDate != null) {
             etEventDate.setInputType(InputType.TYPE_NULL);
             etEventDate.setKeyListener(null);
             etEventDate.setCursorVisible(false);
-            etEventDate.setLongClickable(false);
             etEventDate.setFocusable(false);
-            etEventDate.setFocusableInTouchMode(false);
             etEventDate.setClickable(true);
         }
 
         View.OnClickListener dateClick = v -> openMaterialCalendar();
-        if (etEventDate != null) etEventDate.setOnClickListener(dateClick);
-        if (tilEventDate != null) tilEventDate.setOnClickListener(dateClick);
+        if (etEventDate != null) {
+            etEventDate.setOnClickListener(dateClick);
+        }
+        if (tilEventDate != null) {
+            tilEventDate.setOnClickListener(dateClick);
+        }
+    }
 
-        btnBack.setOnClickListener(v -> finish());
-
+    private void setupClickListeners() {
         btnSave.setOnClickListener(v -> {
-            setResult(RESULT_OK, new Intent());
-            finish();
+            if (validateInputs()) {
+                if ("EDIT".equals(mode)) {
+                    updateEvent();
+                } else {
+                    addNewEvent();
+                }
+            }
+        });
+    }
+
+    private boolean validateInputs() {
+        if (etEventTitle.getText().toString().trim().isEmpty()) {
+            etEventTitle.setError("Title is required");
+            return false;
+        }
+        if (etEventDate.getText().toString().trim().isEmpty()) {
+            etEventDate.setError("Date is required");
+            return false;
+        }
+        if (etEventLocation.getText().toString().trim().isEmpty()) {
+            etEventLocation.setError("Location is required");
+            return false;
+        }
+        if (etEventCategory.getText().toString().trim().isEmpty()) {
+            etEventCategory.setError("Category is required");
+            return false;
+        }
+
+        String capacityStr = etEventCapacity.getText().toString().trim();
+        if (capacityStr.isEmpty()) {
+            etEventCapacity.setError("Capacity is required");
+            return false;
+        }
+
+        try {
+            int capacity = Integer.parseInt(capacityStr);
+            if (capacity <= 0) {
+                etEventCapacity.setError("Capacity must be greater than 0");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            etEventCapacity.setError("Invalid capacity");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void addNewEvent() {
+        String title = etEventTitle.getText().toString().trim();
+        String date = etEventDate.getText().toString().trim();
+        String location = etEventLocation.getText().toString().trim();
+        String category = etEventCategory.getText().toString().trim();
+        int capacity = Integer.parseInt(etEventCapacity.getText().toString().trim());
+
+        Event event = new Event(title, date, location, category, capacity, capacity);
+
+        eventService.addEvent(event, new EventService.EventCallback() {
+            @Override
+            public void onSuccess(String message) {
+                Toast.makeText(AdminEventFormActivity.this,
+                        "Event created successfully", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Failed to create event: " + error, Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void updateEvent() {
+        String title = etEventTitle.getText().toString().trim();
+        String date = etEventDate.getText().toString().trim();
+        String location = etEventLocation.getText().toString().trim();
+        String category = etEventCategory.getText().toString().trim();
+        int capacity = Integer.parseInt(etEventCapacity.getText().toString().trim());
+
+        Event event = new Event(title, date, location, category, capacity, capacity);
+        event.setId(eventId);
+
+        eventService.editEvent(event, new EventService.EventCallback() {
+            @Override
+            public void onSuccess(String message) {
+                Toast.makeText(AdminEventFormActivity.this,
+                        "Event updated successfully", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Failed to update event: " + error, Snackbar.LENGTH_LONG).show();
+            }
         });
     }
 
@@ -104,7 +244,9 @@ public class AdminEventFormActivity extends AppCompatActivity {
         picker.addOnPositiveButtonClickListener(selection -> {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            if (etEventDate != null) etEventDate.setText(sdf.format(new Date(selection)));
+            if (etEventDate != null) {
+                etEventDate.setText(sdf.format(new Date(selection)));
+            }
         });
 
         picker.show(getSupportFragmentManager(), "DATE_PICKER");
