@@ -12,7 +12,7 @@ android {
     defaultConfig {
         applicationId = "com.example.cloudticketreservationwk"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 36 // changed from 34 to 36
         versionCode = 1
         versionName = "1.0"
 
@@ -28,6 +28,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -61,6 +62,7 @@ dependencies {
 
 }
 
+// DON'T REMOVE (for junit5)
 tasks.withType<Test> {
     useJUnitPlatform()
 }

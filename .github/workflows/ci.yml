@@ -3,7 +3,7 @@ name: CI Pipeline - Ticket Booking App
 # When this workflow runs
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ main, dev, feature/** ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -26,6 +26,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
       # Step 3: Make gradlew executable
       - name: Make gradlew executable

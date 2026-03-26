@@ -2,6 +2,9 @@
 .gradle/
 build/
 
+### Local configuration ###
+local.properties
+
 # Keep Gradle wrapper
 !gradle/wrapper/gradle-wrapper.jar
 

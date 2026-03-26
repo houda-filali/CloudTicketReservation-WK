@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_pink_gradient"
+    android:padding="18dp">
+
+    <TextView
+        android:id="@+id/tvDetailsHeaderTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Event Details"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#6B2B2B"
+        android:gravity="center"
+        android:layout_marginTop="6dp"
+        android:layout_marginStart="84dp"
+        android:layout_marginEnd="84dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="Logout"
+        android:textAllCaps="false"
+        android:textColor="#6B2B2B"
+        android:background="@drawable/btn_pill"
+        android:backgroundTint="@null"
+        app:backgroundTint="@null"
+        app:cornerRadius="20dp"
+        app:layout_constraintTop_toTopOf="@id/tvDetailsHeaderTitle"
+        app:layout_constraintBottom_toBottomOf="@id/tvDetailsHeaderTitle"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/cardDetails"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/card_soft"
+        android:orientation="vertical"
+        android:padding="18dp"
+        android:layout_marginTop="14dp"
+        app:layout_constraintTop_toBottomOf="@id/tvDetailsHeaderTitle"
+        app:layout_constraintBottom_toTopOf="@id/btnBackToEvents"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvDetailsTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#6B2B2B"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:id="@+id/tvDetailsDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#7A3A3A"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:id="@+id/tvDetailsLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#7A3A3A"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:id="@+id/tvDetailsCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#7A3A3A"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:id="@+id/tvDetailsDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#7A3A3A"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:id="@+id/tvSeats"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Available seats: -"
+                    android:textColor="#7A3A3A"
+                    android:layout_marginBottom="18dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Number of tickets"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="#9B5B5B"
+                    app:hintTextColor="#7A3A3A"
+                    android:layout_marginBottom="12dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTickets"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:digits="0123456789"
+                        android:enabled="true"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:textColor="#4B1E1E"
+                        android:textColorHint="#7A3A3A" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnReserve"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:text="Reserve"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:textColor="#6B2B2B"
+                    android:background="@drawable/btn_pill"
+                    android:backgroundTint="@null"
+                    app:backgroundTint="@null"
+                    app:cornerRadius="26dp" />
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnBackToEvents"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:text="Back to Events"
+        android:textAllCaps="false"
+        android:textColor="#6B2B2B"
+        android:background="@drawable/btn_pill"
+        android:backgroundTint="@null"
+        app:backgroundTint="@null"
+        app:cornerRadius="26dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/cardDetails"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
