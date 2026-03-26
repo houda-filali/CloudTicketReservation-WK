@@ -1,13 +1,15 @@
 package com.example.cloudticketreservationwk.service;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.example.cloudticketreservationwk.model.User;
 import com.example.cloudticketreservationwk.model.Event;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +54,7 @@ public class ReservationService {
         return false;
     }
 
-    // Enhanced method with Firestore integration
+    // Enhanced method with Firestore integration using Transaction
     public void createReservation(String eventId, int numberOfTickets, ReservationCallback callback) {
         if (auth.getCurrentUser() == null) {
             callback.onFailure("User not logged in");
@@ -60,126 +62,76 @@ public class ReservationService {
         }
 
         String userId = auth.getCurrentUser().getUid();
+        DocumentReference eventRef = db.collection("events").document(eventId);
 
-        // First check if event exists and has available seats
-        db.collection("events").document(eventId)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (!documentSnapshot.exists()) {
-                        callback.onFailure("Event not found");
-                        return;
-                    }
+        db.runTransaction(transaction -> {
+            DocumentSnapshot snap = transaction.get(eventRef);
+            if (!snap.exists()) {
+                throw new FirebaseFirestoreException("Event not found", FirebaseFirestoreException.Code.NOT_FOUND);
+            }
 
-                    Event event = documentSnapshot.toObject(Event.class);
-                    if (event == null) {
-                        callback.onFailure("Invalid event data");
-                        return;
-                    }
+            Boolean isCancelled = snap.getBoolean("isCancelled");
+            if (isCancelled != null && isCancelled) {
+                throw new FirebaseFirestoreException("Event has been cancelled", FirebaseFirestoreException.Code.ABORTED);
+            }
 
-                    if (event.getIsCancelled()) {
-                        callback.onFailure("Event has been cancelled");
-                        return;
-                    }
+            Long seats = snap.getLong("availableSeats");
+            if (seats == null || seats < numberOfTickets) {
+                throw new FirebaseFirestoreException("Not enough seats available", FirebaseFirestoreException.Code.ABORTED);
+            }
 
-                    if (event.getAvailableSeats() < numberOfTickets) {
-                        callback.onFailure("Not enough available seats. Only " +
-                                event.getAvailableSeats() + " seats available.");
-                        return;
-                    }
+            String eventTitle = snap.getString("title");
 
-                    // Create reservation
-                    Map<String, Object> reservation = new HashMap<>();
-                    reservation.put("userId", userId);
-                    reservation.put("eventId", eventId);
-                    reservation.put("eventName", event.getTitle());
-                    reservation.put("numberOfTickets", numberOfTickets);
-                    reservation.put("reservationDate", FieldValue.serverTimestamp());
-                    reservation.put("status", "Active");
+            // Update seat count
+            transaction.update(eventRef, "availableSeats", seats - numberOfTickets);
 
-                    // Make final copies for lambda
-                    String finalEventId = eventId;
-                    int finalNumberOfTickets = numberOfTickets;
-                    int originalAvailableSeats = event.getAvailableSeats();
+            // Create reservation map
+            Map<String, Object> res = new HashMap<>();
+            res.put("userId", userId);
+            res.put("eventId", eventId);
+            res.put("eventName", eventTitle);
+            res.put("numberOfTickets", numberOfTickets);
+            res.put("reservationDate", FieldValue.serverTimestamp());
+            res.put("status", "Active");
 
-                    db.collection("reservations")
-                            .add(reservation)
-                            .addOnSuccessListener(documentReference -> {
-                                // Update available seats
-                                int newAvailableSeats = originalAvailableSeats - finalNumberOfTickets;
-                                db.collection("events").document(finalEventId)
-                                        .update("availableSeats", newAvailableSeats)
-                                        .addOnSuccessListener(aVoid -> {
-                                            callback.onSuccess(documentReference.getId());
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            // Rollback: Delete the reservation if seat update fails
-                                            documentReference.delete()
-                                                    .addOnSuccessListener(aVoid -> {
-                                                        callback.onFailure("Failed to update seat count. Reservation cancelled.");
-                                                    })
-                                                    .addOnFailureListener(deleteError -> {
-                                                        callback.onFailure("Critical error: Reservation created but seat count inconsistent. Please contact support.");
-                                                    });
-                                        });
-                            })
-                            .addOnFailureListener(e ->
-                                    callback.onFailure("Failed to create reservation: " + e.getMessage()));
-                })
-                .addOnFailureListener(e ->
-                        callback.onFailure("Failed to fetch event: " + e.getMessage()));
+            // Generate a new document reference for the reservation
+            DocumentReference resRef = db.collection("reservations").document();
+            transaction.set(resRef, res);
+
+            return resRef.getId();
+        }).addOnSuccessListener(callback::onSuccess)
+        .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }
 
-    // Cancel a reservation and return seats to the event
+    // Cancel a reservation and return seats to the event using Transaction
     public void cancelReservation(String reservationId, ReservationCallback callback) {
-        db.collection("reservations").document(reservationId)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (!documentSnapshot.exists()) {
-                        callback.onFailure("Reservation not found");
-                        return;
-                    }
+        DocumentReference resRef = db.collection("reservations").document(reservationId);
 
-                    String eventId = documentSnapshot.getString("eventId");
-                    Long ticketsLong = documentSnapshot.getLong("numberOfTickets");
-                    int numberOfTickets = ticketsLong != null ? ticketsLong.intValue() : 0;
+        db.runTransaction(transaction -> {
+            DocumentSnapshot resSnap = transaction.get(resRef);
+            if (!resSnap.exists()) {
+                throw new FirebaseFirestoreException("Reservation not found", FirebaseFirestoreException.Code.NOT_FOUND);
+            }
 
-                    // Check if already cancelled
-                    String status = documentSnapshot.getString("status");
-                    if ("Cancelled".equals(status)) {
-                        callback.onFailure("Reservation is already cancelled");
-                        return;
-                    }
+            String status = resSnap.getString("status");
+            if ("Cancelled".equals(status)) {
+                throw new FirebaseFirestoreException("Reservation is already cancelled", FirebaseFirestoreException.Code.ABORTED);
+            }
 
-                    // Make final copies for lambda
-                    final String finalEventId = eventId;
-                    final int finalNumberOfTickets = numberOfTickets;
+            String eventId = resSnap.getString("eventId");
+            Long tickets = resSnap.getLong("numberOfTickets");
+            final long finalTickets = tickets != null ? tickets : 0;
 
-                    // Update reservation status
-                    documentSnapshot.getReference()
-                            .update("status", "Cancelled")
-                            .addOnSuccessListener(aVoid -> {
-                                // Return seats to event
-                                if (finalEventId != null && finalNumberOfTickets > 0) {
-                                    db.collection("events").document(finalEventId)
-                                            .update("availableSeats",
-                                                    FieldValue.increment(finalNumberOfTickets))
-                                            .addOnSuccessListener(aVoid2 -> {
-                                                callback.onSuccess("Reservation cancelled successfully");
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                // Still return success for reservation cancellation,
-                                                // but log the error
-                                                callback.onSuccess("Reservation cancelled but seat count may be incorrect. Please contact support.");
-                                            });
-                                } else {
-                                    callback.onSuccess("Reservation cancelled successfully");
-                                }
-                            })
-                            .addOnFailureListener(e ->
-                                    callback.onFailure("Failed to cancel reservation: " + e.getMessage()));
-                })
-                .addOnFailureListener(e ->
-                        callback.onFailure("Failed to fetch reservation: " + e.getMessage()));
+            transaction.update(resRef, "status", "Cancelled");
+
+            if (eventId != null && finalTickets > 0) {
+                DocumentReference eventRef = db.collection("events").document(eventId);
+                transaction.update(eventRef, "availableSeats", FieldValue.increment(finalTickets));
+            }
+
+            return null;
+        }).addOnSuccessListener(unused -> callback.onSuccess("Reservation cancelled successfully"))
+        .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }
 
     // Get user's reservations

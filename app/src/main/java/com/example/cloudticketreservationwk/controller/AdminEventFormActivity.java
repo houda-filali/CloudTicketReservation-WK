@@ -41,6 +41,7 @@ public class AdminEventFormActivity extends AppCompatActivity {
     private EventService eventService;
     private String mode;
     private String eventId;
+    private int oldAvailableSeats;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,7 @@ public class AdminEventFormActivity extends AppCompatActivity {
     private void getIntentData() {
         mode = getIntent().getStringExtra("MODE");
         eventId = getIntent().getStringExtra("EVENT_ID");
+        oldAvailableSeats = getIntent().getIntExtra("EVENT_AVAILABLE", 0);
     }
 
     private void setupFormBasedOnMode() {
@@ -212,9 +214,18 @@ public class AdminEventFormActivity extends AppCompatActivity {
         String date = etEventDate.getText().toString().trim();
         String location = etEventLocation.getText().toString().trim();
         String category = etEventCategory.getText().toString().trim();
-        int capacity = Integer.parseInt(etEventCapacity.getText().toString().trim());
+        int newTotalSeats = Integer.parseInt(etEventCapacity.getText().toString().trim());
 
-        Event event = new Event(title, date, location, category, capacity, capacity);
+        // Calculate new available seats based on existing reservations
+        int oldTotalSeats = getIntent().getIntExtra("EVENT_CAPACITY", 0);
+        int reservedSeats = oldTotalSeats - oldAvailableSeats;
+        int newAvailableSeats = newTotalSeats - reservedSeats;
+
+        // If new capacity is less than existing reservations, we set available to 0
+        // (This prevents negative available seats but shows "Full")
+        if (newAvailableSeats < 0) newAvailableSeats = 0;
+
+        Event event = new Event(title, date, location, category, newAvailableSeats, newTotalSeats);
         event.setId(eventId);
 
         eventService.editEvent(event, new EventService.EventCallback() {

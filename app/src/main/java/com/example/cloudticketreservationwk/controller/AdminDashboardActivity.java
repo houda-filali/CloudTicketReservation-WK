@@ -128,6 +128,7 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminEv
                             event.getLocation(),
                             event.getCategory(),
                             event.getTotalSeats(),
+                            event.getAvailableSeats(),
                             event.getIsCancelled() ? "Canceled" : "Active"
                     ));
                 }
@@ -167,6 +168,7 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminEv
         intent.putExtra("EVENT_LOCATION", e.location);
         intent.putExtra("EVENT_CATEGORY", e.category);
         intent.putExtra("EVENT_CAPACITY", e.capacity);
+        intent.putExtra("EVENT_AVAILABLE", e.availableSeats);
         startActivityForResult(intent, REQUEST_CODE_ADD_EDIT);
     }
 

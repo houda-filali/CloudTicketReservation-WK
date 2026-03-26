@@ -70,14 +70,17 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         ReservationItem r = items.get(position);
 
         h.tvTitle.setText(r.title);
-        h.tvDate.setText("Date: " + r.date);
+        h.tvDate.setText("Date: " + (r.date != null ? r.date : ""));
         h.tvTickets.setText("Tickets: " + r.tickets);
         h.tvStatus.setText("Status: " + r.status);
 
-        if ("Canceled".equals(r.status)) {
+        // Fixed spelling to match Firestore "Cancelled"
+        if ("Cancelled".equals(r.status)) {
             h.btnCancel.setEnabled(false);
+            h.btnCancel.setText("Cancelled");
         } else {
             h.btnCancel.setEnabled(true);
+            h.btnCancel.setText("Cancel");
         }
 
         h.btnCancel.setOnClickListener(v -> listener.onCancelClicked(r));
