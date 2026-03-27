@@ -87,12 +87,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="#7A3A3A"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="6dp" />
 
                 <TextView
                     android:id="@+id/tvDetailsDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="#7A3A3A"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:id="@+id/tvSeats"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Available seats: -"
                     android:textColor="#7A3A3A"
                     android:layout_marginBottom="18dp" />
 

@@ -1,4 +1,4 @@
-package com.cloudticketreservation.model;
+package com.example.cloudticketreservationwk.model;
 
 public class User {
     // this class should handle all attributes related to users and contains no business logic.
