@@ -1,7 +1,8 @@
 package com.example.cloudticketreservationwk.controller;
 
 import com.example.cloudticketreservationwk.R;
-import com.example.cloudticketreservationwk.service.InMemoryStore;
+import com.example.cloudticketreservationwk.service.EventService;
+import com.example.cloudticketreservationwk.model.Event;
 import com.example.cloudticketreservationwk.firebase.AuthService;
 
 import android.content.Intent;
@@ -36,7 +37,7 @@ public class EventListActivity extends AppCompatActivity implements EventAdapter
     private final List<EventAdapter.EventItem> allEvents = new ArrayList<>();
 
     private EventAdapter adapter;
-
+    private EventService eventService;
     private TextInputEditText etSearch;
     private TextInputLayout tilSearch;
     private View tvEmpty;
@@ -47,6 +48,8 @@ public class EventListActivity extends AppCompatActivity implements EventAdapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
+
+        eventService = new EventService(this);
 
         RecyclerView rvEvents = findViewById(R.id.rvEvents);
         etSearch = findViewById(R.id.etSearch);
@@ -104,59 +107,77 @@ public class EventListActivity extends AppCompatActivity implements EventAdapter
         btnMyReservations.setOnClickListener(v ->
                 startActivity(new Intent(this,MyReservationsActivity.class))
         );
-
-        reloadFromStore();
+        loadEventsFromFirestore();
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        reloadFromStore();
+        loadEventsFromFirestore();
     }
 
-    private void reloadFromStore(){
+    private void loadEventsFromFirestore() {
+        // First seed if needed, then load
+        eventService.seedInitialEvents(new EventService.EventCallback() {
+            @Override
+            public void onSuccess(String message) {
+                fetchEvents();
+            }
 
-        allEvents.clear();
-        events.clear();
+            @Override
+            public void onFailure(String error) {
+                fetchEvents(); // Still try to fetch even if seed check fails
+            }
+        });
+    }
 
-        for(InMemoryStore.EventItem e : InMemoryStore.EVENTS){
+    private void fetchEvents() {
+        eventService.getAllEvents(new EventService.EventsCallback() {
+            @Override
+            public void onSuccess(List<Event> eventList) {
+                allEvents.clear();
+                events.clear();
 
-            EventAdapter.EventItem item =
-                    new EventAdapter.EventItem(
-                            e.id,
-                            e.title,
-                            e.date,
-                            e.location,
-                            e.category,
-                            e.description
-                    );
+                // Only show non-cancelled events to customers
+                for (Event event : eventList) {
+                    if (!event.getIsCancelled()) {
+                        EventAdapter.EventItem item = new EventAdapter.EventItem(
+                                event.getId(),
+                                event.getTitle(),
+                                event.getDate(),
+                                event.getLocation(),
+                                event.getCategory(),
+                                "" // Description - you may want to add this to Event model
+                        );
+                        allEvents.add(item);
+                    }
+                }
 
-            allEvents.add(item);
-        }
+                events.addAll(allEvents);
+                adapter.notifyDataSetChanged();
+                tvEmpty.setVisibility(events.isEmpty() ? View.VISIBLE : View.GONE);
+            }
 
-        events.addAll(allEvents);
-
-        if(adapter!=null) adapter.notifyDataSetChanged();
-
-        if(tvEmpty!=null)
-            tvEmpty.setVisibility(events.isEmpty()?View.VISIBLE:View.GONE);
+            @Override
+            public void onFailure(String error) {
+                // Show error and empty list
+                tvEmpty.setVisibility(View.VISIBLE);
+                events.clear();
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void filter(String q){
-
         String query = q.toLowerCase(Locale.US).trim();
-
         events.clear();
 
         if(query.isEmpty()){
             events.addAll(allEvents);
         }
         else{
-
             for(EventAdapter.EventItem e : allEvents){
-
                 boolean match=false;
-
                 if(searchMode==0){
                     match =
                             contains(e.title,query)||
@@ -167,11 +188,9 @@ public class EventListActivity extends AppCompatActivity implements EventAdapter
                 else if(searchMode==1) match = contains(e.date,query);
                 else if(searchMode==2) match = contains(e.location,query);
                 else if(searchMode==3) match = contains(e.category,query);
-
                 if(match) events.add(e);
             }
         }
-
         adapter.notifyDataSetChanged();
 
         if(tvEmpty!=null)
@@ -183,7 +202,6 @@ public class EventListActivity extends AppCompatActivity implements EventAdapter
     }
 
     private void openMaterialDatePicker(){
-
         if(getSupportFragmentManager().findFragmentByTag("DATE_PICKER_FILTER")!=null)
             return;
 
@@ -193,12 +211,9 @@ public class EventListActivity extends AppCompatActivity implements EventAdapter
                         .build();
 
         picker.addOnPositiveButtonClickListener(selection -> {
-
             SimpleDateFormat sdf =
                     new SimpleDateFormat("yyyy-MM-dd",Locale.US);
-
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-
             etSearch.setText(sdf.format(new Date(selection)));
         });
 
@@ -207,7 +222,6 @@ public class EventListActivity extends AppCompatActivity implements EventAdapter
 
     @Override
     public void onViewClicked(EventAdapter.EventItem event){
-
         Intent i = new Intent(this,EventDetailsActivity.class);
 
         i.putExtra("EVENT_ID",event.id);
@@ -222,33 +236,26 @@ public class EventListActivity extends AppCompatActivity implements EventAdapter
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-
         menu.add(0,1,0,"My Reservations");
         menu.add(0,2,1,"Logout");
-
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
-
         if(item.getItemId()==1){
-
             startActivity(new Intent(this,MyReservationsActivity.class));
             return true;
         }
 
         if(item.getItemId()==2){
-
             confirmLogout();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     private void confirmLogout(){
-
         new MaterialAlertDialogBuilder(this)
                 .setTitle("Logout")
                 .setMessage("Are you sure you want to logout?")
@@ -258,15 +265,10 @@ public class EventListActivity extends AppCompatActivity implements EventAdapter
     }
 
     private void doLogout(){
-
         new AuthService().logout();
-
         Intent i = new Intent(this,MainActivity.class);
-
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
         startActivity(i);
-
         finish();
     }
 }

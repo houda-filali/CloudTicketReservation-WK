@@ -23,15 +23,17 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.VH
         public String location;
         public String category;
         public int capacity;
+        public int availableSeats;
         public String status;
 
-        public AdminEvent(String id, String title, String date, String location, String category, int capacity, String status) {
+        public AdminEvent(String id, String title, String date, String location, String category, int capacity, int availableSeats, String status) {
             this.id = id;
             this.title = title;
             this.date = date;
             this.location = location;
             this.category = category;
             this.capacity = capacity;
+            this.availableSeats = availableSeats;
             this.status = status;
         }
     }
@@ -51,7 +53,7 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.VH
     }
 
     static class VH extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvDate, tvLocation, tvCategory, tvCapacity, tvStatus;
+        TextView tvTitle, tvDate, tvLocation, tvCategory, tvCapacity, tvStatus, tvSummary;
         MaterialButton btnEdit, btnCancel, btnUncancel;
 
         VH(@NonNull View itemView) {
@@ -62,6 +64,7 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.VH
             tvCategory = itemView.findViewById(R.id.tvAdminEventCategory);
             tvCapacity = itemView.findViewById(R.id.tvAdminEventCapacity);
             tvStatus = itemView.findViewById(R.id.tvAdminEventStatus);
+            tvSummary = itemView.findViewById(R.id.tvAdminEventSummary);
             btnEdit = itemView.findViewById(R.id.btnAdminEdit);
             btnCancel = itemView.findViewById(R.id.btnAdminCancel);
             btnUncancel = itemView.findViewById(R.id.btnAdminUncancel);
@@ -87,8 +90,13 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.VH
         if (e.capacity > 0) {
             h.tvCapacity.setText("Capacity: " + e.capacity);
             h.tvCapacity.setVisibility(View.VISIBLE);
+            
+            int reserved = e.capacity - e.availableSeats;
+            h.tvSummary.setText(String.format("Seats: %d/%d (%d Reserved)", e.availableSeats, e.capacity, reserved));
+            h.tvSummary.setVisibility(View.VISIBLE);
         } else {
             h.tvCapacity.setVisibility(View.GONE);
+            h.tvSummary.setVisibility(View.GONE);
         }
 
         if ("Canceled".equals(e.status)) {
