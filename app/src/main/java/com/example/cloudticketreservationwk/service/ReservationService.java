@@ -32,20 +32,17 @@ public class ReservationService {
         void onFailure(String error);
     }
 
-    // Default constructor for backward compatibility
     public ReservationService() {
         this.db = FirebaseFirestore.getInstance();
         this.auth = FirebaseAuth.getInstance();
     }
 
-    // Constructor with context for better user feedback
     public ReservationService(Context context) {
         this.context = context;
         this.db = FirebaseFirestore.getInstance();
         this.auth = FirebaseAuth.getInstance();
     }
 
-    // Original method (kept for compatibility)
     public boolean createReservation(User user, Event event) {
         if (event.getAvailableSeats() > 0 && !event.getIsCancelled()) {
             event.setAvailableSeats(event.getAvailableSeats() - 1);
@@ -54,7 +51,6 @@ public class ReservationService {
         return false;
     }
 
-    // Enhanced method with Firestore integration using Transaction
     public void createReservation(String eventId, int numberOfTickets, ReservationCallback callback) {
         if (auth.getCurrentUser() == null) {
             callback.onFailure("User not logged in");
