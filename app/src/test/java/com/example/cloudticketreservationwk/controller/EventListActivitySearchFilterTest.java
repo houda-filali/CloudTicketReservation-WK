@@ -1,16 +1,17 @@
 package com.example.cloudticketreservationwk.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Answers.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.times;
 
 import android.view.View;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -18,25 +19,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = 33)
-public class EventListActivitySearchFilterTest {
+class EventListActivitySearchFilterTest {
 
     private EventListActivity activity;
     private List<EventAdapter.EventItem> events;
     private List<EventAdapter.EventItem> allEvents;
+    private EventAdapter adapter;
     private View emptyView;
 
-    @Before
-    public void setUp() throws Exception {
-        // Create test data
-        activity = new EventListActivity();
+    @BeforeEach
+    void setUp() throws Exception {
+        activity = mock(EventListActivity.class, CALLS_REAL_METHODS);
 
-        events = getPrivateList("events");
-        allEvents = getPrivateList("allEvents");
-
-        events.clear();
-        allEvents.clear();
+        events = new ArrayList<>();
+        allEvents = new ArrayList<>();
 
         allEvents.addAll(Arrays.asList(
                 new EventAdapter.EventItem("1", "Comedy Night", "2026-03-10", "Downtown", "Comedy", ""),
@@ -46,57 +42,55 @@ public class EventListActivitySearchFilterTest {
 
         events.addAll(allEvents);
 
-        setPrivateField("adapter", new EventAdapter(events, activity));
+        adapter = mock(EventAdapter.class);
+        emptyView = mock(View.class);
 
-        // Fake empty state view
-        emptyView = new View(RuntimeEnvironment.getApplication());
-        emptyView.setVisibility(View.GONE);
-        setPrivateField("tvEmpty", emptyView);
+        setField("events", events);
+        setField("allEvents", allEvents);
+        setField("adapter", adapter);
+        setField("tvEmpty", emptyView);
+        setSearchMode(0);
     }
 
     @Test
-    public void filter_allMode_matchesTitle() throws Exception {
-        setSearchMode(0);
+    void filter_allMode_matchesTitle() throws Exception {
         invokeFilter("comedy");
 
         assertDisplayedTitles("Comedy Night");
-        assertEquals(View.GONE, emptyView.getVisibility());
+        verify(emptyView).setVisibility(View.GONE);
+        verify(adapter).notifyDataSetChanged();
     }
 
     @Test
-    public void filter_allMode_matchesDate() throws Exception {
-        setSearchMode(0);
+    void filter_allMode_matchesDate() throws Exception {
         invokeFilter("2026-03-12");
 
         assertDisplayedTitles("Tech Meetup");
     }
 
     @Test
-    public void filter_allMode_matchesLocation() throws Exception {
-        setSearchMode(0);
+    void filter_allMode_matchesLocation() throws Exception {
         invokeFilter("old port");
 
         assertDisplayedTitles("Food Festival");
     }
 
     @Test
-    public void filter_allMode_matchesCategory() throws Exception {
-        setSearchMode(0);
+    void filter_allMode_matchesCategory() throws Exception {
         invokeFilter("food");
 
         assertDisplayedTitles("Food Festival");
     }
 
     @Test
-    public void filter_allMode_returnsMultipleMatches() throws Exception {
-        setSearchMode(0);
+    void filter_allMode_returnsMultipleMatches() throws Exception {
         invokeFilter("2026-03");
 
         assertDisplayedTitles("Comedy Night", "Tech Meetup", "Food Festival");
     }
 
     @Test
-    public void filter_dateMode_matchesDate() throws Exception {
+    void filter_dateMode_matchesDate() throws Exception {
         setSearchMode(1);
         invokeFilter("2026-03-10");
 
@@ -104,7 +98,7 @@ public class EventListActivitySearchFilterTest {
     }
 
     @Test
-    public void filter_dateMode_ignoresTitle() throws Exception {
+    void filter_dateMode_ignoresTitle() throws Exception {
         setSearchMode(1);
         invokeFilter("comedy");
 
@@ -112,7 +106,7 @@ public class EventListActivitySearchFilterTest {
     }
 
     @Test
-    public void filter_locationMode_matchesLocation() throws Exception {
+    void filter_locationMode_matchesLocation() throws Exception {
         setSearchMode(2);
         invokeFilter("campus hall");
 
@@ -120,7 +114,7 @@ public class EventListActivitySearchFilterTest {
     }
 
     @Test
-    public void filter_locationMode_ignoresCategory() throws Exception {
+    void filter_locationMode_ignoresCategory() throws Exception {
         setSearchMode(2);
         invokeFilter("tech");
 
@@ -128,7 +122,7 @@ public class EventListActivitySearchFilterTest {
     }
 
     @Test
-    public void filter_categoryMode_matchesCategory() throws Exception {
+    void filter_categoryMode_matchesCategory() throws Exception {
         setSearchMode(3);
         invokeFilter("food");
 
@@ -136,7 +130,7 @@ public class EventListActivitySearchFilterTest {
     }
 
     @Test
-    public void filter_categoryMode_ignoresLocation() throws Exception {
+    void filter_categoryMode_ignoresLocation() throws Exception {
         setSearchMode(3);
         invokeFilter("old port");
 
@@ -144,9 +138,7 @@ public class EventListActivitySearchFilterTest {
     }
 
     @Test
-    public void filter_emptyQuery_restoresAllEvents() throws Exception {
-        setSearchMode(0);
-
+    void filter_emptyQuery_restoresAllEvents() throws Exception {
         invokeFilter("tech");
         assertDisplayedTitles("Tech Meetup");
 
@@ -155,7 +147,7 @@ public class EventListActivitySearchFilterTest {
     }
 
     @Test
-    public void filter_isCaseInsensitive_andTrimsSpaces() throws Exception {
+    void filter_isCaseInsensitive_andTrimsSpaces() throws Exception {
         setSearchMode(2);
         invokeFilter("   cAmPuS hAlL   ");
 
@@ -163,47 +155,36 @@ public class EventListActivitySearchFilterTest {
     }
 
     @Test
-    public void filter_noMatch_showsEmptyState() throws Exception {
-        setSearchMode(0);
+    void filter_noMatch_showsEmptyState() throws Exception {
         invokeFilter("zzzzzz");
 
         assertTrue(events.isEmpty());
-        assertEquals(View.VISIBLE, emptyView.getVisibility());
+        verify(emptyView).setVisibility(View.VISIBLE);
     }
 
     @Test
-    public void filter_afterNoMatch_thenMatch_hidesEmptyState() throws Exception {
-        setSearchMode(0);
-
+    void filter_afterNoMatch_thenMatch_hidesEmptyState() throws Exception {
         invokeFilter("zzzzzz");
-        assertEquals(View.VISIBLE, emptyView.getVisibility());
+        assertTrue(events.isEmpty());
+        verify(emptyView, times(1)).setVisibility(View.VISIBLE);
+
+        clearInvocations(emptyView);
 
         invokeFilter("comedy");
         assertDisplayedTitles("Comedy Night");
-        assertEquals(View.GONE, emptyView.getVisibility());
+        verify(emptyView, times(1)).setVisibility(View.GONE);
     }
 
     @Test
-    public void filter_nullFields_doesNotCrash() throws Exception {
-        // Null values should not break filter
+    void filter_nullFields_doesNotCrash() throws Exception {
         allEvents.add(new EventAdapter.EventItem("4", null, "2026-04-01", null, null, ""));
-        events.add(allEvents.get(allEvents.size() - 1));
 
-        setSearchMode(0);
         invokeFilter("comedy");
 
         assertDisplayedTitles("Comedy Night");
     }
 
-    // Helpers
-    @SuppressWarnings("unchecked")
-    private List<EventAdapter.EventItem> getPrivateList(String fieldName) throws Exception {
-        Field field = EventListActivity.class.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        return (List<EventAdapter.EventItem>) field.get(activity);
-    }
-
-    private void setPrivateField(String fieldName, Object value) throws Exception {
+    private void setField(String fieldName, Object value) throws Exception {
         Field field = EventListActivity.class.getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(activity, value);
@@ -226,6 +207,6 @@ public class EventListActivitySearchFilterTest {
         for (EventAdapter.EventItem item : events) {
             actualTitles.add(item.title);
         }
-        assertTrue(actualTitles.equals(Arrays.asList(expectedTitles)));
+        assertEquals(Arrays.asList(expectedTitles), actualTitles);
     }
 }
