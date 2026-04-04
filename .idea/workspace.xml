@@ -11,24 +11,10 @@
   <component name="ChangeListManager">
     <list default="true" id="3fdad77f-c22d-44a4-813d-b11bd1679aca" name="Changes" comment="Merge remote-tracking branch 'origin/dev' into feature/events&#10;# Please enter a commit message to explain why this merge is necessary,&#10;# especially if it merges an updated upstream into a topic branch.&#10;#&#10;# Lines starting with '#' will be ignored, and an empty message aborts&#10;# the commit.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/functions/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/functions/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/functions/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/.package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/dotenv/CHANGELOG.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/dotenv/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/dotenv/README-es.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/dotenv/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/dotenv/SECURITY.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/dotenv/config.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/dotenv/config.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/dotenv/lib/cli-options.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/dotenv/lib/env-options.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/dotenv/lib/main.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/dotenv/lib/main.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/dotenv/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/controller/MyReservationsActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/controller/MyReservationsActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/controller/ReservationAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/controller/ReservationAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/service/NotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/service/NotificationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/service/ReservationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/service/ReservationService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +24,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[LocalEmulator::path=C:\Users\hibat_jze8h9z\.android\avd\Medium_Phone.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[PhysicalDevice::serial=R5CWA1BZZSE]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -115,7 +101,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "feature/notifications",
+    "git-widget-placeholder": "dev",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
