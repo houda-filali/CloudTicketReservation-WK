@@ -18,13 +18,15 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
 
     public static class ReservationItem {
         public final String id;
+        public final String eventId;
         public final String title;
         public final String date;
         public final String tickets;
         public final String status;
 
-        public ReservationItem(String id, String title, String date, String tickets, String status) {
+        public ReservationItem(String id, String eventId, String title, String date, String tickets, String status) {
             this.id = id;
+            this.eventId = eventId;
             this.title = title;
             this.date = date;
             this.tickets = tickets;
