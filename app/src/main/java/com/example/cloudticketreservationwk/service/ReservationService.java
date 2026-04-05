@@ -33,14 +33,27 @@ public class ReservationService {
     }
 
     public ReservationService() {
-        this.db = FirebaseFirestore.getInstance();
-        this.auth = FirebaseAuth.getInstance();
+        try {
+            this.db = FirebaseFirestore.getInstance();
+            this.auth = FirebaseAuth.getInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public ReservationService(Context context) {
         this.context = context;
-        this.db = FirebaseFirestore.getInstance();
-        this.auth = FirebaseAuth.getInstance();
+        try {
+            this.db = FirebaseFirestore.getInstance();
+            this.auth = FirebaseAuth.getInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ReservationService(FirebaseFirestore db, FirebaseAuth auth) {
+        this.db = db;
+        this.auth = auth;
     }
 
     public boolean createReservation(User user, Event event) {
@@ -52,7 +65,7 @@ public class ReservationService {
     }
 
     public void createReservation(String eventId, int numberOfTickets, ReservationCallback callback) {
-        if (auth.getCurrentUser() == null) {
+        if (auth == null || auth.getCurrentUser() == null) {
             callback.onFailure("User not logged in");
             return;
         }
@@ -79,10 +92,8 @@ public class ReservationService {
             String eventTitle = snap.getString("title");
             String eventDate = snap.getString("date");
 
-            // Update seat count
             transaction.update(eventRef, "availableSeats", seats - numberOfTickets);
 
-            // Create reservation map
             Map<String, Object> res = new HashMap<>();
             res.put("userId", userId);
             res.put("eventId", eventId);
@@ -92,7 +103,6 @@ public class ReservationService {
             res.put("reservationDate", FieldValue.serverTimestamp());
             res.put("status", "Active");
 
-            // Generate a new document reference for the reservation
             DocumentReference resRef = db.collection("reservations").document();
             transaction.set(resRef, res);
 
@@ -101,8 +111,11 @@ public class ReservationService {
         .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }
 
-    // Cancel a reservation and return seats to the event using Transaction
     public void cancelReservation(String reservationId, ReservationCallback callback) {
+        if (db == null) {
+             callback.onFailure("DB not initialized");
+             return;
+        }
         DocumentReference resRef = db.collection("reservations").document(reservationId);
 
         db.runTransaction(transaction -> {
@@ -132,9 +145,8 @@ public class ReservationService {
         .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }
 
-    // Get user's reservations
     public void getUserReservations(ReservationsCallback callback) {
-        if (auth.getCurrentUser() == null) {
+        if (auth == null || auth.getCurrentUser() == null) {
             callback.onFailure("User not logged in");
             return;
         }
