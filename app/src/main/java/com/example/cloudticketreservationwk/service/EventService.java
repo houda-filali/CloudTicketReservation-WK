@@ -32,6 +32,13 @@ public class EventService {
         this.db = FirebaseFirestore.getInstance();
         this.context = context;
     }
+
+    // Constructor for testing, allows injection of mock firestore
+    public EventService(Context context, FirebaseFirestore mockFirestore) {
+        this.db = mockFirestore;
+        this.context = context;
+    }
+
     // Adding an event
     public void addEvent(Event event, EventCallback callback) {
         String eventId = db.collection("events").document().getId();

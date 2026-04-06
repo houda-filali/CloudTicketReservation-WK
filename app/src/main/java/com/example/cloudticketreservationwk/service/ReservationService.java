@@ -51,10 +51,12 @@ public class ReservationService {
         }
     }
 
-    public ReservationService(FirebaseFirestore db, FirebaseAuth auth) {
+    public ReservationService(FirebaseFirestore mockDb, FirebaseAuth mockAuth) {
         this.db = db;
         this.auth = auth;
     }
+
+
 
     public boolean createReservation(User user, Event event) {
         if (event.getAvailableSeats() > 0 && !event.getIsCancelled()) {
