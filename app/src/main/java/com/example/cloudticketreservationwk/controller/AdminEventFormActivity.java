@@ -221,12 +221,26 @@ public class AdminEventFormActivity extends AppCompatActivity {
         int reservedSeats = oldTotalSeats - oldAvailableSeats;
         int newAvailableSeats = newTotalSeats - reservedSeats;
 
-        // If new capacity is less than existing reservations, we set available to 0
-        // (This prevents negative available seats but shows "Full")
-        if (newAvailableSeats < 0) newAvailableSeats = 0;
+        if (newTotalSeats < reservedSeats) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Cannot Reduce Capacity")
+                    .setMessage(String.format(
+                            "Cannot reduce capacity to %d because there are %d existing reservations.\n\n" +
+                                    "Please increase capacity or cancel entire event.",
+                            newTotalSeats, reservedSeats))
+                    .setPositiveButton("OK", null)
+                    .show();
+            return;
+        }
+
+        newAvailableSeats = newTotalSeats - reservedSeats;
 
         Event event = new Event(title, date, location, category, newAvailableSeats, newTotalSeats);
         event.setId(eventId);
+
+        // Preserve cancel
+        boolean isCancelled = getIntent().getBooleanExtra("IS_CANCELLED", false);
+        event.setCancelled(isCancelled);
 
         eventService.editEvent(event, new EventService.EventCallback() {
             @Override

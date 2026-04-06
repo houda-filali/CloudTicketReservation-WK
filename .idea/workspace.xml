@@ -9,12 +9,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3fdad77f-c22d-44a4-813d-b11bd1679aca" name="Changes" comment="Merge remote-tracking branch 'origin/dev' into feature/events&#10;# Please enter a commit message to explain why this merge is necessary,&#10;# especially if it merges an updated upstream into a topic branch.&#10;#&#10;# Lines starting with '#' will be ignored, and an empty message aborts&#10;# the commit.">
+    <list default="true" id="3fdad77f-c22d-44a4-813d-b11bd1679aca" name="Changes" comment="Modify admin capacity edit as to not override active reservations">
+      <change afterPath="$PROJECT_DIR$/app/src/test/java/com/example/cloudticketreservationwk/controller/AdminEventValidationTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/test/java/com/example/cloudticketreservationwk/integration/AdminEventIntegrationTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/test/java/com/example/cloudticketreservationwk/service/EventCapacityUpdateTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/test/java/com/example/cloudticketreservationwk/service/EventServiceTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/controller/MyReservationsActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/controller/MyReservationsActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/controller/ReservationAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/controller/ReservationAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/service/NotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/service/NotificationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/service/ReservationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/cloudticketreservationwk/service/ReservationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +25,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[PhysicalDevice::serial=R5CWA1BZZSE]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[LocalEmulator::path=/Users/elif/.android/avd/Medium_Phone.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -38,12 +39,7 @@
         </task>
         <projects_view>
           <tree_state>
-            <expand>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="CloudTicketReservationWK" type="f1a62948:ProjectNode" />
-              </path>
-            </expand>
+            <expand />
             <select />
           </tree_state>
         </projects_view>
@@ -93,7 +89,10 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Android App.app.executor": "Run",
-    "Gradle.NotificationServiceTest.executor": "Run",
+    "Gradle.AdminEventValidationTest.executor": "Run",
+    "Gradle.AdminEventValidationTest.testEmptyTitleIsInvalid.executor": "Run",
+    "Gradle.AdminEventValidationTest.testValidCapacityValues.executor": "Run",
+    "Gradle.EventCapacityUpdateTest.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -105,7 +104,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "dev",
+    "git-widget-placeholder": "bug/event-edit",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
@@ -123,7 +122,7 @@
       <recent name="$PROJECT_DIR$/app/src/test/java/com/example/cloudticketreservationwk" />
     </key>
   </component>
-  <component name="RunManager" selected="Android App.app">
+  <component name="RunManager" selected="Gradle.EventCapacityUpdateTest">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="CloudTicketReservationWK.app" />
       <option name="ANDROID_RUN_CONFIGURATION_SCHEMA_VERSION" value="1" />
@@ -196,7 +195,7 @@
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="NotificationServiceTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="AdminEventValidationTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -209,7 +208,79 @@
           <list>
             <option value=":app:testDebugUnitTest" />
             <option value="--tests" />
-            <option value="&quot;com.example.cloudticketreservationwk.service.NotificationServiceTest&quot;" />
+            <option value="&quot;com.example.cloudticketreservationwk.controller.AdminEventValidationTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="AdminEventValidationTest.testEmptyTitleIsInvalid" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:testDebugUnitTest" />
+            <option value="--tests" />
+            <option value="&quot;com.example.cloudticketreservationwk.controller.AdminEventValidationTest.testEmptyTitleIsInvalid&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="AdminEventValidationTest.testValidCapacityValues" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:testDebugUnitTest" />
+            <option value="--tests" />
+            <option value="&quot;com.example.cloudticketreservationwk.controller.AdminEventValidationTest.testValidCapacityValues&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="EventCapacityUpdateTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:testDebugUnitTest" />
+            <option value="--tests" />
+            <option value="&quot;com.example.cloudticketreservationwk.service.EventCapacityUpdateTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -222,7 +293,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.NotificationServiceTest" />
+        <item itemvalue="Gradle.EventCapacityUpdateTest" />
+        <item itemvalue="Gradle.AdminEventValidationTest.testValidCapacityValues" />
+        <item itemvalue="Gradle.AdminEventValidationTest.testEmptyTitleIsInvalid" />
+        <item itemvalue="Gradle.AdminEventValidationTest" />
       </list>
     </recent_temporary>
   </component>
@@ -321,7 +395,15 @@
       <option name="project" value="LOCAL" />
       <updated>1773427306364</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Modify admin capacity edit as to not override active reservations">
+      <option name="closed" value="true" />
+      <created>1775339556655</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1775339556655</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -332,7 +414,8 @@
     <MESSAGE value="Modify to JUnit 4." />
     <MESSAGE value="Update example test file to JUnit 4." />
     <MESSAGE value="Commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="Commit" />
+    <MESSAGE value="Modify admin capacity edit as to not override active reservations" />
+    <option name="LAST_COMMIT_MESSAGE" value="Modify admin capacity edit as to not override active reservations" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
