@@ -41,9 +41,13 @@ class AdminEventIntegrationTest {
         for (FirebaseApp app : FirebaseApp.getApps(context)) {
             app.delete();
         }
-        FirebaseApp.initializeApp(context);
+        if (FirebaseApp.getApps(context).isEmpty()) {
+            FirebaseApp.initializeApp(context);
+        }
+
         firestore = FirebaseFirestore.getInstance();
         firestore.useEmulator("10.0.2.2", 8080);
+
 
         eventService = new EventService(context, firestore);
         createdEventIds = new ArrayList<>();
