@@ -21,6 +21,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 public class EventDetailsIntegrationTest {
 
     private Intent createIntent() {
+        // Create the intent used to open EventDetailsActivity with test data
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), EventDetailsActivity.class);
         intent.putExtra("EVENT_ID", "event-1");
         intent.putExtra("TITLE", "Comedy Night");
@@ -33,8 +34,10 @@ public class EventDetailsIntegrationTest {
 
     @Test
     void eventDetails_displaysPassedEventData() {
+        // Open the event details screen with sample event data
         ActivityScenario.launch(createIntent());
 
+        // Check that all event details are shown correctly
         onView(withId(R.id.tvDetailsTitle)).check(matches(withText("Comedy Night")));
         onView(withId(R.id.tvDetailsDate)).check(matches(withText("2026-03-10")));
         onView(withId(R.id.tvDetailsLocation)).check(matches(withText("Downtown")));
@@ -44,30 +47,39 @@ public class EventDetailsIntegrationTest {
 
     @Test
     void eventDetails_clickReserveWithEmptyTickets_showsError() {
+        // Open the event details screen
         ActivityScenario.launch(createIntent());
 
+        // Click reserve without entering any ticket number
         onView(withId(R.id.btnReserve)).perform(click());
 
+        // Check that the correct error message is shown
         onView(withId(R.id.etTickets)).check(matches(hasErrorText("Enter number of tickets")));
     }
 
     @Test
     void eventDetails_clickReserveWithInvalidNumber_showsError() {
+        // Open the event details screen
         ActivityScenario.launch(createIntent());
 
+        // Enter text instead of a valid number and click reserve
         onView(withId(R.id.etTickets)).perform(replaceText("abc"));
         onView(withId(R.id.btnReserve)).perform(click());
 
+        // Check that the correct error message is shown
         onView(withId(R.id.etTickets)).check(matches(hasErrorText("Enter a valid number")));
     }
 
     @Test
     void eventDetails_clickReserveWithZeroTickets_showsError() {
+        // Open the event details screen
         ActivityScenario.launch(createIntent());
 
+        // Enter 0 tickets and click reserve
         onView(withId(R.id.etTickets)).perform(replaceText("0"));
         onView(withId(R.id.btnReserve)).perform(click());
 
+        // Check that the correct error message is shown
         onView(withId(R.id.etTickets)).check(matches(hasErrorText("Enter at least 1 ticket")));
     }
 }
