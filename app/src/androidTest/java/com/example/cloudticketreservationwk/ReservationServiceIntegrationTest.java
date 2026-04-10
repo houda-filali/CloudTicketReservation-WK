@@ -23,7 +23,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 @RunWith(AndroidJUnit4.class)
-public class ReservationServiceComponentTest {
+public class ReservationServiceIntegrationTest {
 
     private AuthService authService;
     private EventService eventService;
