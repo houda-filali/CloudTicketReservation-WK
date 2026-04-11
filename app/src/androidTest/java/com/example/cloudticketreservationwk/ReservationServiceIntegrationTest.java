@@ -41,7 +41,7 @@ public class ReservationServiceIntegrationTest {
         String email = "test_" + UUID.randomUUID().toString().substring(0, 8) + ".admin@test.com";
         register(email, "password123");
         eventId = createEvent();
-        assertNotNull("eventId should not be null after setup. Check internet status.", eventId);
+        assertNotNull("eventId is null. This usually means a Firebase network error.", eventId);
     }
 
     @After
@@ -60,7 +60,7 @@ public class ReservationServiceIntegrationTest {
         assertTrue("Initial seats should be greater than 0", startSeats > 0);
         
         String resId = reserve(3);
-        assertNotNull("Reservation ID should not be null", resId);
+        assertNotNull("Reservation ID is null. Reserve operation failed.", resId);
         assertEquals("Seats should decrement by 3", startSeats - 3, getSeats());
 
         cancel(resId);
@@ -74,11 +74,11 @@ public class ReservationServiceIntegrationTest {
             public void onSuccess(FirebaseUser user) { latch.countDown(); }
             @Override
             public void onError(Exception e) { 
-                e.printStackTrace();
+                System.err.println("Registration failed: " + e.getMessage());
                 latch.countDown(); 
             }
         });
-        assertTrue("Registration timed out", latch.await(20, TimeUnit.SECONDS));
+        assertTrue("Registration timed out (60s). Check emulator internet.", latch.await(60, TimeUnit.SECONDS));
     }
 
     private String createEvent() throws Exception {
@@ -97,7 +97,7 @@ public class ReservationServiceIntegrationTest {
                 latch.countDown(); 
             }
         });
-        assertTrue("Event creation timed out", latch.await(20, TimeUnit.SECONDS));
+        assertTrue("Event creation timed out (60s). Check Firestore rules and network.", latch.await(60, TimeUnit.SECONDS));
         return id[0];
     }
 
@@ -109,10 +109,10 @@ public class ReservationServiceIntegrationTest {
             s[0] = val != null ? val.intValue() : -1;
             latch.countDown();
         }).addOnFailureListener(e -> {
-            e.printStackTrace();
+            System.err.println("Get seats failed: " + e.getMessage());
             latch.countDown();
         });
-        assertTrue("Fetching seats timed out", latch.await(20, TimeUnit.SECONDS));
+        assertTrue("Get seats timed out (60s).", latch.await(60, TimeUnit.SECONDS));
         return s[0];
     }
 
@@ -128,7 +128,7 @@ public class ReservationServiceIntegrationTest {
                 latch.countDown(); 
             }
         });
-        assertTrue("Reservation timed out", latch.await(20, TimeUnit.SECONDS));
+        assertTrue("Reserve operation timed out (60s).", latch.await(60, TimeUnit.SECONDS));
         return id[0];
     }
 
@@ -139,10 +139,10 @@ public class ReservationServiceIntegrationTest {
             public void onSuccess(String m) { latch.countDown(); }
             @Override
             public void onFailure(String e) { 
-                System.err.println("Cancellation failed: " + e);
+                System.err.println("Cancel operation failed: " + e);
                 latch.countDown(); 
             }
         });
-        assertTrue("Cancellation timed out", latch.await(20, TimeUnit.SECONDS));
+        assertTrue("Cancel operation timed out (60s).", latch.await(60, TimeUnit.SECONDS));
     }
 }
