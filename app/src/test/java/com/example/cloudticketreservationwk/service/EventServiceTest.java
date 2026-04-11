@@ -37,13 +37,11 @@ public class EventServiceTest {
                 100,
                 100
         );
-        testEvent.setId("test-event-1");
     }
 
     @Test
     @DisplayName("Should validate event before adding")
     void testAddEventValidData() {
-        // Test the event creation logic before Firebase call
         assertNotNull(testEvent);
         assertNotNull(testEvent.getTitle());
         assertNotNull(testEvent.getDate());
@@ -51,14 +49,11 @@ public class EventServiceTest {
         assertNotNull(testEvent.getCategory());
         assertTrue(testEvent.getTotalSeats() > 0);
 
-        // Verify event has no ID before adding
         assertNull(testEvent.getId());
 
-        // Simulate ID assignment (what Firestore would do)
         String mockFirestoreId = "firestore-generated-id-456";
         testEvent.setId(mockFirestoreId);
 
-        // Verify ID was set
         assertNotNull(testEvent.getId());
         assertEquals(mockFirestoreId, testEvent.getId());
     }
@@ -66,7 +61,7 @@ public class EventServiceTest {
     @Test
     @DisplayName("Should update event fields correctly")
     void testEventUpdate() {
-        // Update fields
+        testEvent.setId("test-event-1");
         testEvent.setTitle("New Title");
         testEvent.setDate("2026-06-01");
         testEvent.setLocation("New Location");
@@ -83,58 +78,49 @@ public class EventServiceTest {
         assertEquals(150, testEvent.getAvailableSeats());
         assertTrue(testEvent.getIsCancelled());
     }
+
     @Test
     @DisplayName("Should calculate available seats after capacity change")
     void testAvailableSeatsCalculation() {
         int oldTotalSeats = 100;
         int oldAvailableSeats = 20;
-        int reservedSeats = oldTotalSeats - oldAvailableSeats; // 80 booked
+        int reservedSeats = oldTotalSeats - oldAvailableSeats;
 
-        // Admin increases capacity to 150
         int newTotalSeats = 150;
         int newAvailableSeats = newTotalSeats - reservedSeats;
         assertEquals(70, newAvailableSeats);
 
-        // Admin decreases capacity to 90
         newTotalSeats = 90;
         newAvailableSeats = newTotalSeats - reservedSeats;
         assertEquals(10, newAvailableSeats);
 
-        // Admin decreases capacity below reservations (your current logic)
         newTotalSeats = 50;
         newAvailableSeats = newTotalSeats - reservedSeats;
-        if (newAvailableSeats < 0) newAvailableSeats = 0; // Your logic
+        if (newAvailableSeats < 0) newAvailableSeats = 0;
         assertEquals(0, newAvailableSeats);
     }
 
     @Test
     @DisplayName("Should create sample events for seeding")
     void testSampleEvents() {
-        // Actual sample events from seedInitialEvents
         Event comedyNight = new Event("Comedy Night", "2026-03-10", "Downtown", "Comedy", 100, 100);
         Event techMeetup = new Event("Tech Meetup", "2026-03-12", "Campus Hall", "Tech", 50, 50);
         Event liveConcert = new Event("Live Concert", "2026-03-20", "Main Arena", "Music", 500, 500);
         Event foodFestival = new Event("Food Festival", "2026-03-25", "Old Port", "Food", 200, 200);
 
-        // Verify comedy night
         assertEquals("Comedy Night", comedyNight.getTitle());
         assertEquals("2026-03-10", comedyNight.getDate());
         assertEquals("Downtown", comedyNight.getLocation());
         assertEquals("Comedy", comedyNight.getCategory());
         assertEquals(100, comedyNight.getTotalSeats());
 
-        // Verify tech meetup
         assertEquals("Tech Meetup", techMeetup.getTitle());
         assertEquals(50, techMeetup.getTotalSeats());
 
-        // Verify live concert
         assertEquals("Live Concert", liveConcert.getTitle());
         assertEquals(500, liveConcert.getTotalSeats());
 
-        // Verify food festival
         assertEquals("Food Festival", foodFestival.getTitle());
         assertEquals(200, foodFestival.getTotalSeats());
     }
-
-
-    }
+}
