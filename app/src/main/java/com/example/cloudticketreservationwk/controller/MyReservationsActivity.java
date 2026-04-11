@@ -72,8 +72,10 @@ public class MyReservationsActivity extends AppCompatActivity implements Reserva
                         String status = doc.getString("status");
                         Long ticketsLong = doc.getLong("numberOfTickets");
                         String eventDate = doc.getString("eventDate");
+                        String eventId = doc.getString("eventId");
                         reservations.add(new ReservationAdapter.ReservationItem(
                                 doc.getId(),
+                                eventId != null ? eventId : "",
                                 doc.getString("eventName"),
                                 eventDate != null ? eventDate : "",
                                 ticketsLong != null ? String.valueOf(ticketsLong) : "1",

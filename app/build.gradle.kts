@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
-    id("de.mannodermaus.android-junit") version "2.0.1"
+    id("de.mannodermaus.android-junit5") version "1.14.0.0"
 }
 
 if (!System.getenv("CI").toBoolean()) {
@@ -64,4 +64,5 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+
 }
