@@ -48,12 +48,17 @@ dependencies {
     implementation(libs.constraintlayout)
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation("org.junit.jupiter:junit-jupiter")
 
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test:runner:1.5.2")
-    androidTestImplementation("androidx.test:core:1.5.0")
+    androidTestImplementation(platform("org.junit:junit-bom:5.14.1"))
+    androidTestImplementation("org.junit.jupiter:junit-jupiter-api")
+    androidTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+
+    androidTestImplementation("androidx.test:core:1.6.1")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
 
     // Mockito
     testImplementation("org.mockito:mockito-core:5.12.0")
