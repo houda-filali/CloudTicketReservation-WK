@@ -2,7 +2,6 @@ package com.example.cloudticketreservationwk.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import android.content.Context;
@@ -16,6 +15,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,8 +38,13 @@ public class NotificationServiceTest {
     private DocumentSnapshot mockDoc2;
     private DocumentReference mockDocRef1;
     private DocumentReference mockDocRef2;
-    private DocumentReference mockNotificationDocRef;
-    private Task<DocumentReference> mockAddTask;
+
+    private DocumentReference mockNotifDoc1;
+    private DocumentReference mockNotifDoc2;
+    private Task<Void> mockSetTask;
+
+    private WriteBatch mockBatch;
+    private Task<Void> mockCommitTask;
 
     @BeforeEach
     public void setUp() {
@@ -55,8 +60,13 @@ public class NotificationServiceTest {
         mockDoc2 = mock(DocumentSnapshot.class);
         mockDocRef1 = mock(DocumentReference.class);
         mockDocRef2 = mock(DocumentReference.class);
-        mockNotificationDocRef = mock(DocumentReference.class);
-        mockAddTask = mock(Task.class);
+
+        mockNotifDoc1 = mock(DocumentReference.class);
+        mockNotifDoc2 = mock(DocumentReference.class);
+        mockSetTask = mock(Task.class);
+
+        mockBatch = mock(WriteBatch.class);
+        mockCommitTask = mock(Task.class);
     }
 
     @Test
@@ -66,13 +76,12 @@ public class NotificationServiceTest {
 
             when(mockFirestore.collection("reservations")).thenReturn(mockReservationsCollection);
             when(mockFirestore.collection("notifications")).thenReturn(mockNotificationsCollection);
+            when(mockFirestore.batch()).thenReturn(mockBatch);
 
             when(mockReservationsCollection.whereEqualTo("eventId", "event123"))
                     .thenReturn(mockQueryAfterEventId);
-
             when(mockQueryAfterEventId.whereEqualTo("status", "Active"))
                     .thenReturn(mockQueryAfterStatus);
-
             when(mockQueryAfterStatus.get()).thenReturn(mockTask);
 
             when(mockDoc1.getString("userId")).thenReturn("user1");
@@ -85,18 +94,32 @@ public class NotificationServiceTest {
 
             when(mockQuerySnapshot.getDocuments()).thenReturn(Arrays.asList(mockDoc1, mockDoc2));
 
-            when(mockNotificationsCollection.add(any())).thenReturn(mockAddTask);
+            when(mockNotificationsCollection.document())
+                    .thenReturn(mockNotifDoc1)
+                    .thenReturn(mockNotifDoc2);
+
+            when(mockNotifDoc1.set(any())).thenReturn(mockSetTask);
+            when(mockNotifDoc2.set(any())).thenReturn(mockSetTask);
+
+            when(mockBatch.update(any(DocumentReference.class), any(String.class), any()))
+                    .thenReturn(mockBatch);
+            when(mockBatch.commit()).thenReturn(mockCommitTask);
 
             when(mockTask.addOnSuccessListener(any())).thenAnswer(invocation -> {
                 OnSuccessListener<QuerySnapshot> listener = invocation.getArgument(0);
                 listener.onSuccess(mockQuerySnapshot);
                 return mockTask;
             });
-
             when(mockTask.addOnFailureListener(any())).thenReturn(mockTask);
 
-            NotificationService service = new NotificationService(mockContext);
+            when(mockCommitTask.addOnSuccessListener(any())).thenAnswer(invocation -> {
+                OnSuccessListener<Void> listener = invocation.getArgument(0);
+                listener.onSuccess(null);
+                return mockCommitTask;
+            });
+            when(mockCommitTask.addOnFailureListener(any())).thenReturn(mockCommitTask);
 
+            NotificationService service = new NotificationService(mockContext);
             TestCallback callback = new TestCallback();
 
             service.notifyEventCancellation("event123", "Test Event", callback);
@@ -106,13 +129,15 @@ public class NotificationServiceTest {
             verify(mockQueryAfterEventId).whereEqualTo("status", "Active");
             verify(mockQueryAfterStatus).get();
 
-            verify(mockNotificationsCollection, times(2)).add(any());
-            verify(mockDocRef1).update("status", "Cancelled");
-            verify(mockDocRef2).update("status", "Cancelled");
+            verify(mockNotificationsCollection, times(2)).document();
+
+            verify(mockBatch).update(mockDocRef1, "status", "Cancelled");
+            verify(mockBatch).update(mockDocRef2, "status", "Cancelled");
+            verify(mockBatch).commit();
 
             assertTrue(callback.successCalled);
             assertFalse(callback.failureCalled);
-            assertEquals("Cancelled event and notified 2 users", callback.successMessage);
+            assertEquals("Cancelled 2 reservations and notified users", callback.successMessage);
         }
     }
 
@@ -123,36 +148,44 @@ public class NotificationServiceTest {
 
             when(mockFirestore.collection("reservations")).thenReturn(mockReservationsCollection);
             when(mockFirestore.collection("notifications")).thenReturn(mockNotificationsCollection);
+            when(mockFirestore.batch()).thenReturn(mockBatch);
 
             when(mockReservationsCollection.whereEqualTo("eventId", "event123"))
                     .thenReturn(mockQueryAfterEventId);
-
             when(mockQueryAfterEventId.whereEqualTo("status", "Active"))
                     .thenReturn(mockQueryAfterStatus);
-
             when(mockQueryAfterStatus.get()).thenReturn(mockTask);
 
             when(mockQuerySnapshot.getDocuments()).thenReturn(Collections.emptyList());
+
+            when(mockBatch.commit()).thenReturn(mockCommitTask);
 
             when(mockTask.addOnSuccessListener(any())).thenAnswer(invocation -> {
                 OnSuccessListener<QuerySnapshot> listener = invocation.getArgument(0);
                 listener.onSuccess(mockQuerySnapshot);
                 return mockTask;
             });
-
             when(mockTask.addOnFailureListener(any())).thenReturn(mockTask);
 
-            NotificationService service = new NotificationService(mockContext);
+            when(mockCommitTask.addOnSuccessListener(any())).thenAnswer(invocation -> {
+                OnSuccessListener<Void> listener = invocation.getArgument(0);
+                listener.onSuccess(null);
+                return mockCommitTask;
+            });
+            when(mockCommitTask.addOnFailureListener(any())).thenReturn(mockCommitTask);
 
+            NotificationService service = new NotificationService(mockContext);
             TestCallback callback = new TestCallback();
 
             service.notifyEventCancellation("event123", "Test Event", callback);
 
-            verify(mockNotificationsCollection, never()).add(any());
+            verify(mockNotificationsCollection, never()).document();
+            verify(mockBatch, never()).update(any(DocumentReference.class), any(String.class), any());
+            verify(mockBatch).commit();
 
             assertTrue(callback.successCalled);
             assertFalse(callback.failureCalled);
-            assertEquals("Cancelled event and notified 0 users", callback.successMessage);
+            assertEquals("Cancelled 0 reservations and notified users", callback.successMessage);
         }
     }
 
@@ -165,16 +198,13 @@ public class NotificationServiceTest {
 
             when(mockReservationsCollection.whereEqualTo("eventId", "event123"))
                     .thenReturn(mockQueryAfterEventId);
-
             when(mockQueryAfterEventId.whereEqualTo("status", "Active"))
                     .thenReturn(mockQueryAfterStatus);
-
             when(mockQueryAfterStatus.get()).thenReturn(mockTask);
 
             RuntimeException exception = new RuntimeException("Permission denied");
 
             when(mockTask.addOnSuccessListener(any())).thenReturn(mockTask);
-
             when(mockTask.addOnFailureListener(any())).thenAnswer(invocation -> {
                 OnFailureListener listener = invocation.getArgument(0);
                 listener.onFailure(exception);
@@ -182,14 +212,13 @@ public class NotificationServiceTest {
             });
 
             NotificationService service = new NotificationService(mockContext);
-
             TestCallback callback = new TestCallback();
 
             service.notifyEventCancellation("event123", "Test Event", callback);
 
             assertFalse(callback.successCalled);
             assertTrue(callback.failureCalled);
-            assertEquals("Failed to notify users: Permission denied", callback.failureMessage);
+            assertEquals("Failed to fetch reservations: Permission denied", callback.failureMessage);
 
             verify(mockFirestore, never()).collection("notifications");
         }

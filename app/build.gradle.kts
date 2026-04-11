@@ -48,7 +48,6 @@ dependencies {
     implementation(libs.constraintlayout)
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
-    testImplementation("org.mockito:mockito-core:5.12.0")
 
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -60,13 +59,11 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.12.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
 
-}
-
-// DON'T REMOVE (for junit5)
-tasks.withType<Test> {
-    useJUnitPlatform()
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+}
 
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
