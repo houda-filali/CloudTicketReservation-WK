@@ -66,6 +66,9 @@ appId: com.example.cloudticketreservationwk
 
 # step 2- verify seats are restored
 # Go back to event list
+- extendedWaitUntil:
+    notVisible: "Reservation Cancelled"
+    timeout: 10000
 - tapOn:
     id: "btnBackFromReservations"
 
