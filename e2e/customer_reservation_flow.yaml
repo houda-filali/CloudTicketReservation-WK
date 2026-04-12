@@ -1,0 +1,29 @@
+appId: com.example.cloudticketreservationwk
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: "tvCreateAccount"
+- tapOn:
+    id: "etEmail"
+- inputText: "new_customer2@test.com"
+- tapOn:
+    id: "etPassword"
+- inputText: "Password123!"
+- tapOn:
+    id: "etConfirmPassword"
+- inputText: "Password123!"
+- hideKeyboard
+- tapOn:
+    id: "btnSubmit"
+- scrollUntilVisible:
+    element: "Maestro Tech Gala"
+    direction: DOWN
+- tapOn: "Maestro Tech Gala"
+- tapOn:
+    id: "etTickets"
+- inputText: "2"
+- hideKeyboard
+- tapOn:
+    id: "btnReserve"
+- assertVisible: "Reservation Confirmed"
