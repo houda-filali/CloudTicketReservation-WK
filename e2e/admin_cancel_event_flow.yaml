@@ -1,0 +1,98 @@
+appId: com.example.cloudticketreservationwk
+---
+- launchApp:
+    clearState: true
+
+# setup: ensure that the user has a reservation for the event that will be cancelled
+# can put this part as comments to ignore it
+# Customer login
+- tapOn:
+    id: "etEmail"
+- inputText: "05hiba.talbi50@gmail.com"
+
+- tapOn:
+    id: "etPassword"
+- inputText: "123456"
+
+- hideKeyboard
+- tapOn:
+    id: "btnSubmit"
+
+- scrollUntilVisible:
+    element: "Comedy Night"
+    direction: DOWN
+- tapOn: "Comedy Night"
+- tapOn:
+      id: "etTickets"
+- inputText: "1"
+- hideKeyboard
+- tapOn:
+      id: "btnReserve"
+- assertVisible: "Reservation Confirmed"
+# Logout
+- tapOn:
+    id: "btnLogout"
+- tapOn: "Logout"
+
+# step 1- admin cancels the event
+# Admin login
+- tapOn:
+    id: "etEmail"
+- inputText: "hiba.teatea@gmail.com"
+
+- tapOn:
+    id: "etPassword"
+- inputText: "123456"
+
+- hideKeyboard
+- tapOn:
+    id: "btnSubmit"
+
+# Open the event that should already have a reservation
+- scrollUntilVisible:
+    element: "Comedy Night"
+    direction: DOWN
+
+# Cancel event from admin dashboard card
+- tapOn:
+    text: "Cancel"
+    index: 0
+
+- tapOn: "Yes, Cancel Event"
+
+# Wait for Firestore/UI refresh
+- extendedWaitUntil:
+    visible: "STATUS: CANCELED"
+    timeout: 10000
+
+# Logout admin
+- tapOn:
+    id: "btnLogout"
+- tapOn: "Logout"
+
+# step2- the customer checks that the event was cancelled on their acc
+# Customer login
+- tapOn:
+    id: "etEmail"
+- inputText: "05hiba.talbi50@gmail.com"
+
+- tapOn:
+    id: "etPassword"
+- inputText: "123456"
+
+- hideKeyboard
+- tapOn:
+    id: "btnSubmit"
+
+# Open My Reservations
+- tapOn:
+    id: "btnMyReservations"
+
+# Verify related reservation is cancelled
+- scrollUntilVisible:
+    element: "Comedy Night"
+    direction: DOWN
+
+- assertVisible: "Comedy Night"
+- assertVisible: "Status: Cancelled"
+- assertVisible: "Cancelled"

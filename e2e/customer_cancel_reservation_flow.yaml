@@ -1,0 +1,90 @@
+appId: com.example.cloudticketreservationwk
+---
+- launchApp:
+    clearState: true
+
+# Customer login
+- tapOn:
+    id: "etEmail"
+- inputText: "cancelTest@gmail.com"
+- tapOn:
+    id: "etPassword"
+- inputText: "123456"
+- hideKeyboard
+- tapOn:
+    id: "btnSubmit"
+
+
+# setup: ensure the user has reservations to the event
+# can put this part in comments if its unecessary
+# Open event
+
+#- scrollUntilVisible:
+#    element: "Tech Meetup"
+#    direction: DOWN
+#- tapOn: "Tech Meetup"
+# Verify initial seat count
+# make sure the seat count is correct
+#- assertVisible: "Available seats: 386"
+# Create reservation
+#- tapOn:
+#    id: "etTickets"
+#- inputText: "2"
+#- hideKeyboard
+#- tapOn:
+#    id: "btnReserve"
+#- assertVisible: "Reservation Confirmed"
+
+# step 1- customer cancels reservation
+# Open My Reservations
+# if the setup was ran use this
+#- tapOn:
+#    id: "btnGoMyReservations"
+# else:
+- tapOn:
+    id: "btnMyReservations"
+
+# Find reservation
+- scrollUntilVisible:
+    element: "Tech Meetup"
+    direction: DOWN
+
+# Verify reservation is active
+- assertVisible: "Status: Active"
+
+# Cancel the reservation for Tech Meetup specifically
+- tapOn:
+    text: "Cancel"
+    below: "Tech Meetup"
+
+
+# Wait for update
+- extendedWaitUntil:
+    visible: "Status: Cancelled"
+    timeout: 10000
+- assertVisible: "Cancelled"
+
+# step 2- verify seats are restored
+# Go back to event list
+- tapOn:
+    id: "btnBackFromReservations"
+
+# check to ensure it does go back
+- extendedWaitUntil:
+    visible:
+      id: "btnMyReservations"
+    timeout: 10000
+
+# Open event again
+- scrollUntilVisible:
+    element: "Tech Meetup"
+    direction: DOWN
+
+- tapOn: "Tech Meetup"
+
+# Verify seat count restored
+- extendedWaitUntil:
+    visible: "Available seats: 386"
+    timeout: 10000
+
+- assertVisible: "Available seats: 386"
