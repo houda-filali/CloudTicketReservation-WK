@@ -9,7 +9,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3fdad77f-c22d-44a4-813d-b11bd1679aca" name="Changes" comment="Modify firebase.json to allow Firebase emulator to run" />
+    <list default="true" id="3fdad77f-c22d-44a4-813d-b11bd1679aca" name="Changes" comment="Delete unused directories and files">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -528,7 +530,15 @@
       <option name="project" value="LOCAL" />
       <updated>1775761462822</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Delete unused directories and files">
+      <option name="closed" value="true" />
+      <created>1775834849872</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1775834849872</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -546,16 +556,12 @@
     <MESSAGE value="Add directory" />
     <MESSAGE value="Trying to create admin actions integration tests" />
     <MESSAGE value="Modify firebase.json to allow Firebase emulator to run" />
-    <option name="LAST_COMMIT_MESSAGE" value="Modify firebase.json to allow Firebase emulator to run" />
+    <MESSAGE value="Delete unused directories and files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Delete unused directories and files" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/test/java/com/example/cloudticketreservationwk/component/AdminEventComponentTest.java</url>
-          <line>25</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
         <breakpoint enabled="true" type="java-exception">
           <properties class="java.lang.NullPointerException" package="java.lang" />
           <option name="timeStamp" value="2" />
