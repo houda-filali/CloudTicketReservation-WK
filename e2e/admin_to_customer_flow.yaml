@@ -1,0 +1,45 @@
+appId: com.example.cloudticketreservationwk
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: "etEmail"
+- inputText: "hello.admin@gmail.com"
+- tapOn:
+    id: "etPassword"
+- inputText: "Hello!"
+- hideKeyboard
+- tapOn:
+    id: "btnSubmit"
+- tapOn:
+    id: "btnAddEvent"
+- tapOn:
+    id: "etEventTitle"
+- inputText: "Maestro Tech Gala"
+- tapOn:
+    id: "etEventLocation"
+- inputText: "Montreal Center"
+- tapOn:
+    id: "etEventCategory"
+- inputText: "Technology"
+- tapOn:
+    id: "etEventCapacity"
+- inputText: "150"
+- hideKeyboard
+- tapOn:
+    id: "etEventDate"
+- tapOn: "11"
+- tapOn: "OK"
+- tapOn: "Create Event"
+- hideKeyboard
+- tapOn:
+    id: "etEmail"
+- eraseText
+- inputText: "hello@gmai"
+- hideKeyboard
+- tapOn: "Login"
+- scrollUntilVisible:
+      element: "Maestro Tech Gala"
+      direction: DOWN
+- assertVisible: "Maestro Tech Gala"
+- assertVisible: "Montreal Center"
