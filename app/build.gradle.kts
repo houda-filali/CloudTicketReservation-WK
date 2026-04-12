@@ -47,9 +47,8 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
-    testImplementation(platform("org.junit:junit-bom:5.14.1"))
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.mockito:mockito-core:5.12.0")
 
     androidTestImplementation(platform("org.junit:junit-bom:5.14.1"))
     androidTestImplementation("org.junit.jupiter:junit-jupiter-api")
@@ -61,8 +60,15 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
 
+    // Mockito
+    testImplementation("org.mockito:mockito-core:5.12.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+}
 
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
