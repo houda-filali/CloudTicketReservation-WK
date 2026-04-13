@@ -20,7 +20,7 @@ Run the Java class `MainActivity`
 ### Unit Tests
 In terminal: `./gradlew testDebugUnitTest`
 
-### Integration Tests & instrumented tests
+### Integration Tests & Instrumented Tests
 To run integration tests, a Firestore emulator needs to be running alongside the tests. This is how to run said emulator:
 1. `curl -sL https://firebase.tools | bash` (Download Firebase tools)
 2. `firebase login` (Enter credentials to Firebase account)
