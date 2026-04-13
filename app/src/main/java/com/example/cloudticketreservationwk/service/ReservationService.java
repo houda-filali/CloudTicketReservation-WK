@@ -51,9 +51,9 @@ public class ReservationService {
         }
     }
 
-    public ReservationService(FirebaseFirestore db, FirebaseAuth auth) {
+    public ReservationService(FirebaseFirestore db, FirebaseAuth mockAuth) {
         this.db = db;
-        this.auth = auth;
+        this.auth = mockAuth;
     }
 
     public boolean createReservation(User user, Event event) {
