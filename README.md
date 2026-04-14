@@ -31,3 +31,8 @@ On another terminal:
 2. Run each test class separately.
 
 ### E2E / System Tests
+1. curl -FsSL https://get.maestro.mobile.dev | bash
+2. maestro test e2e/admin_to_customer_flow.yaml
+3. maestro test e2e/customer_reservation_flow.yaml
+4. maestro test e2e/admin_cancel_event_flow.yaml
+5. maestro test e2e/customer_cancel_reservation_flow.yaml
