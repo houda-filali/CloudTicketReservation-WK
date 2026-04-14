@@ -4,6 +4,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Firebase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -31,6 +32,11 @@ public class EventService {
     public EventService(Context context) {
         this.db = FirebaseFirestore.getInstance();
         this.context = context;
+    }
+
+    public EventService(Context context, FirebaseFirestore mockFirestore) {
+        this.context = context;
+        this.db = mockFirestore;
     }
     // Adding an event
     public void addEvent(Event event, EventCallback callback) {

@@ -51,9 +51,9 @@ public class ReservationService {
         }
     }
 
-    public ReservationService(FirebaseFirestore db, FirebaseAuth auth) {
+    public ReservationService(FirebaseFirestore db, FirebaseAuth mockAuth) {
         this.db = db;
-        this.auth = auth;
+        this.auth = mockAuth;
     }
 
     public boolean createReservation(User user, Event event) {
@@ -90,6 +90,7 @@ public class ReservationService {
             }
 
             String eventTitle = snap.getString("title");
+            String eventDate = snap.getString("date");
 
             transaction.update(eventRef, "availableSeats", seats - numberOfTickets);
 
@@ -97,6 +98,7 @@ public class ReservationService {
             res.put("userId", userId);
             res.put("eventId", eventId);
             res.put("eventName", eventTitle);
+            res.put("eventDate", eventDate);
             res.put("numberOfTickets", numberOfTickets);
             res.put("reservationDate", FieldValue.serverTimestamp());
             res.put("status", "Active");

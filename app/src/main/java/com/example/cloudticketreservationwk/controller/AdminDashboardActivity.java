@@ -37,6 +37,10 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminEv
     private ReservationService reservationService;
     private FirebaseFirestore db;
 
+    public void setEventService(EventService service) { this.eventService = service; }
+    public void setNotificationService(NotificationService service) { this.notificationService = service; }
+    public void setReservationService(ReservationService service) { this.reservationService = service; }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
